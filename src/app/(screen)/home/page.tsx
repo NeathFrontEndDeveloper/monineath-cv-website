@@ -37,7 +37,7 @@ const Home = () => {
               className="space-y-3 sm:space-y-4"
             >
               <p className="text-green-400 text-base sm:text-lg font-medium">
-                👋 Hello there! I'm
+                👋 Hello there! I&apos;m
               </p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
                 Neath
@@ -61,7 +61,7 @@ const Home = () => {
               className="min-h-[4rem] sm:min-h-[5rem] flex items-center justify-center lg:justify-start"
             >
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-green-400 font-mono text-center lg:text-left">
-                <span className="text-white">I'm a</span> {Texts}
+                <span className="text-white">I&apos;m a</span> {Texts}
                 <span className="animate-pulse">|</span>
               </h2>
             </motion.div>
@@ -74,8 +74,8 @@ const Home = () => {
               className="text-gray-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0"
             >
               Passionate about creating innovative web solutions and user
-              experiences. I specialize in modern web technologies and love
-              turning ideas into reality.
+              experiences&rsquo; I specialize in modern web technologies and
+              love turning ideas into reality&rsquo;
             </motion.p>
 
             {/* Buttons - improved mobile layout */}

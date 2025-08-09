@@ -1,4 +1,4 @@
-import { Code2, Database, Smartphone, Cloud, Palette } from "lucide-react";
+import { Code2, Database, Cloud, Palette } from "lucide-react";
 import Telegram from "@/components/font-awsome-icon/Telegram";
 import Facebook from "@/components/font-awsome-icon/Facebook";
 import Linkedin from "@/components/font-awsome-icon/Linkedin";
@@ -115,50 +115,38 @@ export const skillsData = [
 export const education: Education[] = [
   {
     id: 1,
-    degree: "Master of Science",
-    field: "Computer Science",
-    institution: "Stanford University",
-    location: "Stanford, CA",
-    period: "2020 - 2022",
-    gpa: "3.85/4.0",
+    field: "Graphic Design",
+    institution: "Premier School of Technology",
+    location: "Siem Reap, Cambodia",
+    period: "2023 - 2024",
     description:
-      "Specialized in Machine Learning and Artificial Intelligence with focus on deep learning architectures and natural language processing.",
-    achievements: [
-      "Dean's List for 3 consecutive semesters",
-      "Graduate Teaching Assistant for CS229 Machine Learning",
-      "Published research paper on neural network optimization",
-    ],
-    relevant_courses: [
-      "Advanced Machine Learning",
-      "Deep Learning",
-      "Natural Language Processing",
-      "Computer Vision",
-      "Reinforcement Learning",
-    ],
+      "Focused on graphic design principles, creative tools, and visual communication techniques, with hands-on experience in branding and digital media.",
+    achievements: ["Completed over 20 projects designing posters and logos."],
   },
-  {
-    id: 2,
-    degree: "Bachelor of Science",
-    field: "Software Engineering",
-    institution: "University of California, Berkeley",
-    location: "Berkeley, CA",
-    period: "2016 - 2020",
-    gpa: "3.92/4.0",
-    description:
-      "Comprehensive program covering software development, algorithms, and system design with emphasis on practical application.",
-    achievements: [
-      "Summa Cum Laude graduate",
-      "Outstanding Student in Computer Science Award",
-      "Led university hackathon winning team",
-    ],
-    relevant_courses: [
-      "Data Structures & Algorithms",
-      "Software Engineering",
-      "Database Systems",
-      "Web Development",
-      "Mobile App Development",
-    ],
-  },
+
+  // {
+  //   id: 2,
+  //   degree: "Bachelor of Science",
+  //   field: "Software Engineering",
+  //   institution: "University of California, Berkeley",
+  //   location: "Berkeley, CA",
+  //   period: "2016 - 2020",
+  //   gpa: "3.92/4.0",
+  //   description:
+  //     "Comprehensive program covering software development, algorithms, and system design with emphasis on practical application.",
+  //   achievements: [
+  //     "Summa Cum Laude graduate",
+  //     "Outstanding Student in Computer Science Award",
+  //     "Led university hackathon winning team",
+  //   ],
+  //   relevant_courses: [
+  //     "Data Structures & Algorithms",
+  //     "Software Engineering",
+  //     "Database Systems",
+  //     "Web Development",
+  //     "Mobile App Development",
+  //   ],
+  // },
 ];
 
 export const certifications: Certification[] = [

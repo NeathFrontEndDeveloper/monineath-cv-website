@@ -1,3 +1,5 @@
+"use client";
+
 import About from "./content/about";
 import Education from "./content/education";
 

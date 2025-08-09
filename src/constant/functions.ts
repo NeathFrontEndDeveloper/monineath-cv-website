@@ -77,7 +77,7 @@ export const expertSkills = skillsData.reduce(
 );
 
 // Helper function to get skill level info
-export const getSkillInfo = (level: any) => {
+export const getSkillInfo = (level: number) => {
   if (level >= 90) return { color: "#00ff99", text: "Expert" };
   if (level >= 80) return { color: "#00d4ff", text: "Advanced" };
   if (level >= 70) return { color: "#fbbf24", text: "Intermediate" };

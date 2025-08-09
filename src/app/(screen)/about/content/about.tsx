@@ -1,6 +1,4 @@
-"use client";
-
-import React, { use } from "react";
+// import React, { use } from "react";
 import Image from "next/image";
 import ProfileImage from "@/assets/me.jpg";
 import { Button } from "@/components/ui/button";
@@ -76,7 +74,6 @@ const About: React.FC = () => {
                 className="w-12 xs:w-14 sm:w-16 md:w-20 lg:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-[#00ff99] to-[#00ff99]/50 rounded-full mx-auto lg:mx-0"
               />
             </div>
-
             {/* Description */}
             <div className="space-y-3 xs:space-y-4 sm:space-y-5 md:space-y-6 text-gray-300 leading-relaxed max-w-xs xs:max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto lg:mx-0">
               <motion.p
@@ -85,7 +82,7 @@ const About: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.5 }}
                 className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl"
               >
-                Hello! I'm a passionate developer with a love for creating{" "}
+                Hello! I&apos;m a passionate developer with a love for creating{" "}
                 <span className="text-[#00ff99] font-semibold">
                   innovative solutions
                 </span>
@@ -143,7 +140,7 @@ const About: React.FC = () => {
                 variant="secondary"
                 className="p-6 sm:p-8 lg:p-6 text-sm sm:text-xl lg:text-sm font-semibold"
               >
-                Let's Connect
+                Let&apos;s Connect
                 <MoveRight className="inline-block ml-1 xs:ml-2" size={16} />
               </Button>
 
