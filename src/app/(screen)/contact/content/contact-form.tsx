@@ -3,9 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import { nonnegative, z } from "zod";
 import { useState } from "react";
 
+// import { Button } from "@/components/shared/button";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,29 +19,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TEXTS } from "@/constant/color";
+import { IoSend } from "react-icons/io5";
+// import { motion } from "framer-motion";
 
 // Enhanced validation schema with better error messages
 const contactSchema = z.object({
-  fullName: z
-    .string()
-    .trim()
-    .min(2, "Full name must be at least 2 characters")
-    .max(50, "Full name cannot exceed 50 characters")
-    .regex(
-      /^[a-zA-Z\s'-]+$/,
-      "Full name can only contain letters, spaces, hyphens, and apostrophes"
-    ),
+  fullName: z.string().nonempty({ message: "Full Name is required" }),
 
   email: z
     .string()
-    .trim()
-    .email("Please enter a valid email address")
-    .max(100, "Email cannot exceed 100 characters"),
+    .nonempty({ message: "Email is required" })
+    .email("Please enter a valid email address"),
 
   message: z
     .string()
-    .trim()
-    .min(10, "Message must be at least 10 characters")
+    .nonempty({ message: "Message is requried" })
     .max(1000, "Message cannot exceed 1000 characters"),
 });
 
@@ -61,7 +54,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
       email: "",
       message: "",
     },
-    mode: "onBlur", // Validate on blur for better UX
+    mode: "onBlur",
   });
 
   const handleSubmit = async (data: ContactFormData) => {
@@ -104,7 +97,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
 
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="w-full space-y-6"
+          className="w-full space-y-6 text-white"
           noValidate
         >
           <FormField
@@ -116,15 +109,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
                   Full Name <span className="text-red-400">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter your full name"
-                    className={
-                      errors.fullName
-                        ? "border-red-500 focus:border-red-500"
-                        : ""
-                    }
-                    {...field}
-                  />
+                  <Input placeholder="Enter your full name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -143,9 +128,6 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
                   <Input
                     type="email"
                     placeholder="Enter your email address"
-                    className={
-                      errors.email ? "border-red-500 focus:border-red-500" : ""
-                    }
                     {...field}
                   />
                 </FormControl>
@@ -166,11 +148,6 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
                   <Textarea
                     placeholder="Write your message here..."
                     rows={5}
-                    className={`resize-none ${
-                      errors.message
-                        ? "border-red-500 focus:border-red-500"
-                        : ""
-                    }`}
                     {...field}
                   />
                 </FormControl>
@@ -186,10 +163,18 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
 
           <Button
             type="submit"
-            className="w-full"
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#00ff7b] text-[#1c1c22] border border-transparent 
+             hover:bg-transparent hover:border-[#00ff7b] hover:text-[#00ff7b] 
+             transition-all duration-300 ease-in-out cursor-pointer"
             // disabled={isSubmitting || !isDirty || !isValid}
           >
-            {isSubmitting ? "Sending..." : "Send Message"}
+            <span className="font-medium">
+              {isSubmitting ? "Sending..." : "Send Message"}
+            </span>
+
+            <span className="flex items-center">
+              <IoSend size={18} />
+            </span>
           </Button>
         </form>
       </Form>
