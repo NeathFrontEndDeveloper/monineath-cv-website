@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,62 +17,114 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { TEXTS } from "@/constant/color";
 
-const ContactSchema = z.object({
-  full_name: z
+// Enhanced validation schema with better error messages
+const contactSchema = z.object({
+  fullName: z
     .string()
     .trim()
-    .min(2, { message: "Full name must be at least 2 characters long." })
-    .max(50, { message: "Full name must be less than 50 characters." }),
+    .min(2, "Full name must be at least 2 characters")
+    .max(50, "Full name cannot exceed 50 characters")
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      "Full name can only contain letters, spaces, hyphens, and apostrophes"
+    ),
 
   email: z
     .string()
     .trim()
-    .email({ message: "Please enter a valid email address." }),
+    .email("Please enter a valid email address")
+    .max(100, "Email cannot exceed 100 characters"),
 
   message: z
     .string()
     .trim()
-    .min(10, { message: "Message must be at least 10 characters long." })
-    .max(1000, { message: "Message must be less than 1000 characters." }),
+    .min(10, "Message must be at least 10 characters")
+    .max(1000, "Message cannot exceed 1000 characters"),
 });
 
-const ContactForm = () => {
-  const form = useForm<z.infer<typeof ContactSchema>>({
-    resolver: zodResolver(ContactSchema),
+type ContactFormData = z.infer<typeof contactSchema>;
+
+interface ContactFormProps {
+  onSubmit?: (data: ContactFormData) => Promise<void> | void;
+  className?: string;
+}
+
+const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
     defaultValues: {
-      full_name: "",
+      fullName: "",
       email: "",
       message: "",
     },
+    mode: "onBlur", // Validate on blur for better UX
   });
 
-  function onSubmit(data: z.infer<typeof ContactSchema>) {
-    toast("Form submitted!", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4 text-white overflow-auto">
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      ),
-    });
-    form.reset();
-  }
+  const handleSubmit = async (data: ContactFormData) => {
+    setIsSubmitting(true);
+
+    try {
+      if (onSubmit) {
+        await onSubmit(data);
+      } else {
+        // Default behavior - show toast with formatted data
+        toast.success("Message sent successfully!", {
+          description: `Thank you, ${data.fullName}! We'll get back to you soon.`,
+        });
+      }
+
+      form.reset();
+    } catch (error) {
+      toast.error("Failed to send message", {
+        description: "Please try again or contact us directly.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const {
+    formState: { errors },
+  } = form;
 
   return (
-    <div>
+    <div className={className}>
       <Form {...form}>
+        <div className="mb-6">
+          <h2 className={`font-semibold text-3xl mb-2 ${TEXTS}`}>Contact Me</h2>
+          <p className="text-gray-400 text-sm">
+            Fill out the form below and I'll get back to you as soon as
+            possible.
+          </p>
+        </div>
+
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(handleSubmit)}
           className="w-full space-y-6"
+          noValidate
         >
           <FormField
             control={form.control}
-            name="full_name"
+            name="fullName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full Name</FormLabel>
+                <FormLabel className="text-lg text-white">
+                  Full Name <span className="text-red-400">*</span>
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Your Name" {...field} />
+                  <Input
+                    placeholder="Enter your full name"
+                    className={
+                      errors.fullName
+                        ? "border-red-500 focus:border-red-500"
+                        : ""
+                    }
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,9 +136,18 @@ const ContactForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-lg text-white">
+                  Email Address <span className="text-red-400">*</span>
+                </FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="Your Email" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    className={
+                      errors.email ? "border-red-500 focus:border-red-500" : ""
+                    }
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,21 +159,37 @@ const ContactForm = () => {
             name="message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Message</FormLabel>
+                <FormLabel className="text-lg text-white">
+                  Message <span className="text-red-400">*</span>
+                </FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Write your message here..."
                     rows={5}
+                    className={`resize-none ${
+                      errors.message
+                        ? "border-red-500 focus:border-red-500"
+                        : ""
+                    }`}
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <div className="flex justify-between items-center">
+                  <FormMessage />
+                  <span className="text-sm text-gray-400">
+                    {field.value.length}/1000
+                  </span>
+                </div>
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Submit
+          <Button
+            type="submit"
+            className="w-full"
+            // disabled={isSubmitting || !isDirty || !isValid}
+          >
+            {isSubmitting ? "Sending..." : "Send Message"}
           </Button>
         </form>
       </Form>

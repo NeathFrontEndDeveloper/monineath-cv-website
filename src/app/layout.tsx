@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: "Sol Monineath | Front-End Developer & Graphic Designer",
     description:
       "Crafting modern and responsive web experiences with React, Next.js, and Tailwind CSS. Discover my projects and creative journey.",
-    url: "https://your-portfolio-url.com",
+    url: "https://monineath-portfolio-five.vercel.app/",
     siteName: "Sol Monineath Portfolio",
     images: [
       {

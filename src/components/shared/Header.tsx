@@ -43,7 +43,7 @@ const Header = () => {
               <li key={href}>
                 <Link
                   href={href}
-                  className={`relative group transition-colors duration-300 ${
+                  className={`relative group transition-colors duration-300 px-1 pb-2 ${
                     isActive(href)
                       ? "text-[#00ff99]"
                       : "text-white hover:text-[#00ff99]"
