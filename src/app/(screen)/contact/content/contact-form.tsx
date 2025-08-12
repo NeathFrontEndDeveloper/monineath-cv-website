@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { nonnegative, z } from "zod";
+import { z } from "zod";
 import { useState } from "react";
 
 // import { Button } from "@/components/shared/button";
@@ -24,7 +24,7 @@ import { IoSend } from "react-icons/io5";
 
 // Enhanced validation schema with better error messages
 const contactSchema = z.object({
-  fullName: z.string().nonempty({ message: "Full Name is required" }),
+  full_name: z.string().nonempty({ message: "Full Name is required" }),
 
   email: z
     .string()
@@ -50,7 +50,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
-      fullName: "",
+      full_name: "",
       email: "",
       message: "",
     },
@@ -65,7 +65,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
       } else {
         // Default behavior - show toast with formatted data
         toast.success("Message sent successfully!", {
-          description: `Thank you, ${data.fullName}! We'll get back to you soon.`,
+          description: `Thank you, ${data.full_name}! We'll get back to you soon.`,
         });
       }
 
@@ -74,13 +74,14 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
       toast.error("Failed to send message", {
         description: "Please try again or contact us directly.",
       });
+      console.log(error, "===error===");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const {
-    formState: { errors },
+    formState: {},
   } = form;
 
   return (
@@ -89,7 +90,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
         <div className="mb-6">
           <h2 className={`font-semibold text-3xl mb-2 ${TEXTS}`}>Contact Me</h2>
           <p className="text-gray-400 text-sm">
-            Fill out the form below and I'll get back to you as soon as
+            Fill out the form below and I&lsquo;ll get back to you as soon as
             possible.
           </p>
         </div>
@@ -101,7 +102,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
         >
           <FormField
             control={form.control}
-            name="fullName"
+            name="full_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-lg text-white">
