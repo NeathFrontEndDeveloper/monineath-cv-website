@@ -54,7 +54,6 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
       email: "",
       message: "",
     },
-    mode: "onBlur",
   });
 
   const handleSubmit = async (data: ContactFormData) => {
