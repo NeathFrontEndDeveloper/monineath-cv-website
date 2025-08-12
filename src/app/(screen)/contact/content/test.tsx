@@ -6,8 +6,8 @@ const Test = () => {
       <div className="max-w-2xl bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-8">
         <h1 className="text-2xl font-bold text-white mb-4">Commit Update</h1>
         <p className="text-gray-200 leading-relaxed">
-          In this commit, I&lsquo;ve completed the Contact Form and Contact Info
-          components, though they&lsquo;re not fully functional yet.
+          In this commit&#44; I&lsquo;ve completed the Contact Form and Contact
+          Info components&#44; though they&lsquo;re not fully functional yet.
         </p>
         <p className="text-gray-200 leading-relaxed mt-4">
           I also updated the Header component and the Home page. However, the
