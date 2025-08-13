@@ -3,14 +3,14 @@
 import Image from "next/image";
 import Profile from "@/assets/Profile.jpg";
 import { Button } from "@/components/ui/button";
-import { useTypingEffect, useSkills, useAboutMe } from "@/constant/functions";
+import { useSkills, useAboutMe } from "@/constant/functions";
 import SocialLinks from "@/components/shared/socialLinks";
 import { MoveRight } from "lucide-react";
 import { motion } from "framer-motion";
+import TextType from "@/constant/TextType";
 
 const Home = () => {
   // Functions
-  const Texts = useTypingEffect();
   const viewTechStack = useSkills();
   const aboutMe = useAboutMe();
 
@@ -60,9 +60,22 @@ const Home = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="min-h-[4rem] sm:min-h-[5rem] flex items-center justify-center lg:justify-start"
             >
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-green-400 font-mono text-center lg:text-left">
-                <span className="text-white">I&apos;m a</span> {Texts}
-                <span className="animate-pulse">|</span>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold font-mono text-center lg:text-left">
+                {/* <span className="text-white">I&apos;m a</span> {Texts} */}
+                <span className="text-white">I&apos;m a </span>
+                <TextType
+                  text={[
+                    "Front-end Developer",
+                    "Graphic Designer",
+                    "Problem Solver",
+                  ]}
+                  typingSpeed={75}
+                  pauseDuration={1500}
+                  showCursor={true}
+                  cursorCharacter="_"
+                />
+                {/* <span>{TypingText}</span> */}
+                {/* <span className="animate-pulse">|</span> */}
               </h2>
             </motion.div>
 

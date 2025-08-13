@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useConnect, useViewWork } from "@/constant/functions";
 import { MoveRight } from "lucide-react";
 import { motion } from "framer-motion";
+import CountUp from "@/constant/CountUp";
 
 const About: React.FC = () => {
   const connectBtn = useConnect();
@@ -108,24 +109,40 @@ const About: React.FC = () => {
             </div>
 
             {/* Stats or highlights - responsive grid */}
-            {/* <div className="grid grid-cols-2 gap-3 xs:gap-4 sm:gap-5 md:gap-6 pt-3 xs:pt-4 sm:pt-5 md:pt-6 max-w-xs xs:max-w-sm sm:max-w-md md:max-w-lg mx-auto lg:mx-0">
-              <div className="text-center lg:text-left p-2 xs:p-3 sm:p-4 md:p-5 rounded-lg bg-white/5 backdrop-blur-sm border border-[#00ff99]/20 hover:bg-white/10 hover:border-[#00ff99]/40 transition-all duration-300">
+            <div className="grid grid-cols-2 gap-3 xs:gap-4 sm:gap-5 md:gap-6 pt-3 xs:pt-4 sm:pt-5 md:pt-6 max-w-xs xs:max-w-sm sm:max-w-md md:max-w-lg mx-auto lg:mx-0">
+              {/* <div className="text-center lg:text-left p-2 xs:p-3 sm:p-4 md:p-5 rounded-lg bg-white/5 backdrop-blur-sm border border-[#00ff99]/20 hover:bg-white/10 hover:border-[#00ff99]/40 transition-all duration-300">
                 <div className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl font-bold text-[#00ff99]">
-                  3+
+                  <CountUp
+                    from={0}
+                    to={3}
+                    separator=","
+                    direction="up"
+                    duration={1}
+                    className="count-up-text"
+                  />
+                  +
                 </div>
                 <div className="text-xs xs:text-xs sm:text-sm md:text-sm text-gray-400 uppercase tracking-wide mt-0.5 xs:mt-1">
                   Years Experience
                 </div>
-              </div>
+              </div> */}
               <div className="text-center lg:text-left p-2 xs:p-3 sm:p-4 md:p-5 rounded-lg bg-white/5 backdrop-blur-sm border border-[#00ff99]/20 hover:bg-white/10 hover:border-[#00ff99]/40 transition-all duration-300">
                 <div className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl font-bold text-[#00ff99]">
-                  50+
+                  <CountUp
+                    from={0}
+                    to={50}
+                    separator=","
+                    direction="up"
+                    duration={1}
+                    className="count-up-text"
+                  />
+                  +
                 </div>
                 <div className="text-xs xs:text-xs sm:text-sm md:text-sm text-gray-400 uppercase tracking-wide mt-0.5 xs:mt-1">
                   Projects Completed
                 </div>
               </div>
-            </div> */}
+            </div>
 
             {/* CTA Button - responsive sizing */}
             <motion.div

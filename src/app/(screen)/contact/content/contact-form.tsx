@@ -109,7 +109,11 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
                   Full Name <span className="text-red-400">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your full name" {...field} />
+                  <Input
+                    className="h-12 font-semibold"
+                    placeholder="Enter your full name"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -126,6 +130,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
                 </FormLabel>
                 <FormControl>
                   <Input
+                    className="h-12 font-semibold"
                     type="email"
                     placeholder="Enter your email address"
                     {...field}
@@ -146,6 +151,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
                 </FormLabel>
                 <FormControl>
                   <Textarea
+                    className="h-50 p-4 font-semibold"
                     placeholder="Write your message here..."
                     rows={5}
                     {...field}
