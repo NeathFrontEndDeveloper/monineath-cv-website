@@ -1,4 +1,5 @@
 import { TEXTS } from "@/constant/color";
+import SocialLinks from "@/components/shared/socialLinks";
 
 const ContactInfo = () => {
   const contactInfo = [
@@ -29,6 +30,11 @@ const ContactInfo = () => {
             <span className="text-white break-words">{item.data}</span>
           </div>
         ))}
+      </div>
+
+      {/* social icons link */}
+      <div className="flex items-center p-2 space-x-2">
+        <SocialLinks />
       </div>
 
       <div className="flex items-center space-x-2 mt-6 bg-[#00ff7b]/10 border border-[#00ff7b] rounded-lg px-3 py-2 w-fit">

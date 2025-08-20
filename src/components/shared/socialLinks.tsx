@@ -12,7 +12,7 @@ const SocialLinks = () => {
             href={social.url}
             target={social.name !== "Email" ? "_blank" : undefined}
             rel="noopener noreferrer"
-            className="p-3 rounded-full bg-gray-800/50 text-gray-400 hover:text-green-400 hover:bg-green-400/10 transition-all duration-300 hover:scale-110"
+            className="p-4 rounded-full bg-gray-800/50 text-gray-400 hover:text-green-400 hover:bg-green-400/10 transition-all duration-300 hover:scale-110"
           >
             <Icon className="w-5 h-5" />
           </Link>

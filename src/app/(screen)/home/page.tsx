@@ -15,7 +15,7 @@ const Home = () => {
   const aboutMe = useAboutMe();
 
   return (
-    <section className="w-full min-h-screen flex items-center justify-center text-white px-4 py-8 sm:py-12 lg:py-16 relative overflow-hidden">
+    <section className="w-full h-screen flex items-center justify-center text-white px-4 py-8 sm:py-12 lg:py-16 relative overflow-hidden">
       {/* Floating circles - adjusted for mobile */}
       <div className="absolute top-20 left-4 sm:top-1/4 sm:left-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-green-400/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 right-4 sm:bottom-1/4 sm:right-1/4 w-48 h-48 sm:w-96 sm:h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />

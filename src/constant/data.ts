@@ -36,12 +36,6 @@ export const socialLinks = [
   },
 ];
 
-export const titles = [
-  "Front-end Developer",
-  "Graphic Designer",
-  "Problem Solver",
-];
-
 // My skills data
 export const skillsData = [
   {
@@ -123,28 +117,18 @@ export const education: Education[] = [
       "Focused on graphic design principles, creative tools, and visual communication techniques, with hands-on experience in branding and digital media.",
     achievements: ["Completed over 20 projects designing posters and logos."],
   },
-
   // {
   //   id: 2,
-  //   degree: "Bachelor of Science",
   //   field: "Software Engineering",
   //   institution: "University of California, Berkeley",
   //   location: "Berkeley, CA",
   //   period: "2016 - 2020",
-  //   gpa: "3.92/4.0",
   //   description:
   //     "Comprehensive program covering software development, algorithms, and system design with emphasis on practical application.",
   //   achievements: [
   //     "Summa Cum Laude graduate",
   //     "Outstanding Student in Computer Science Award",
   //     "Led university hackathon winning team",
-  //   ],
-  //   relevant_courses: [
-  //     "Data Structures & Algorithms",
-  //     "Software Engineering",
-  //     "Database Systems",
-  //     "Web Development",
-  //     "Mobile App Development",
   //   ],
   // },
 ];

@@ -63,7 +63,7 @@ export default function RootLayout({
           <div className="fixed top-0 left-0 w-full z-50">
             <Header />
           </div>
-          <main className="mt-24">{children}</main>
+          <main className="mt-24 mb-16">{children}</main>
           <div>
             <Footer />
           </div>

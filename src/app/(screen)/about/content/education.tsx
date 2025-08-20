@@ -69,12 +69,12 @@ const Education: React.FC = () => {
 
         {/* Education Timeline */}
         <div className="mb-20">
-          <h2 className="text-3xl font-bold text-white mb-12 flex items-center justify-center">
+          {/* <h2 className="text-3xl font-bold text-white mb-12 flex items-center justify-center">
             <div className="bg-gradient-to-r from-[#00ff7b] to-white/20 p-3 rounded-xl mr-4 shadow-lg">
               <BookOpen className="w-8 h-8 text-[#1c1c22]" />
             </div>
             Academic Background
-          </h2>
+          </h2> */}
 
           <div className="space-y-8">
             {education.map((edu, index) => (
@@ -86,10 +86,10 @@ const Education: React.FC = () => {
 
                 <div className="flex items-start">
                   {/* Enhanced Timeline dot */}
-                  <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-r from-[#00ff7b] to-white/20 rounded-2xl flex items-center justify-center mr-8 shadow-xl group-hover:shadow-2xl transition-all duration-300 transform group-hover:scale-110 relative overflow-hidden">
+                  {/* <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-r from-[#00ff7b] to-white/20 rounded-2xl flex items-center justify-center mr-8 shadow-xl group-hover:shadow-2xl transition-all duration-300 transform group-hover:scale-110 relative overflow-hidden">
                     <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
                     <GraduationCap className="w-8 h-8 text-[#1c1c22] relative z-10" />
-                  </div>
+                  </div> */}
 
                   {/* Enhanced Content Card */}
                   <div className="flex-grow bg-white/10 backdrop-blur-sm rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02] border border-[#32f38f] hover:border-[#00ff7b]">
