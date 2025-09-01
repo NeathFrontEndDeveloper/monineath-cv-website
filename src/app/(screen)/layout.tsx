@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+// import "./globals.css";
+import Header from "@/components/shared/Header";
+import Footer from "@/components/shared/Footer";
+import { BG } from "@/constant/color";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +37,16 @@ export const metadata: Metadata = {
       "Crafting modern and responsive web experiences with React, Next.js, and Tailwind CSS. Discover my projects and creative journey.",
     url: "https://monineath-portfolio-five.vercel.app/",
     siteName: "Sol Monineath Portfolio",
+    images: [
+      {
+        url: "https://via.placeholder.com/1200x630.png?text=Sol+Monineath+Portfolio",
+        width: 1200,
+        height: 630,
+        alt: "Sol Monineath Portfolio",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
   },
 };
 
@@ -46,7 +60,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className={`${BG}`}>
+          <Toaster richColors position="top-center" />
+          <div className="fixed top-0 left-0 w-full z-50">
+            <Header />
+          </div>
+          <main className="mt-24 mb-16">{children}</main>
+          <div>
+            <Footer />
+          </div>
+        </div>
       </body>
     </html>
   );
