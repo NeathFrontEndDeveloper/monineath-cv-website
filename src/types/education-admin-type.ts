@@ -1,6 +1,7 @@
 export interface educationTableType {
   id: string;
   documentId: string;
+  createdAt: string;
   insitituion: string;
   course: string;
   description: string;
@@ -11,6 +12,7 @@ export interface educationTableType {
 export interface educationType {
   id: number;
   documentId: string;
+  createdAt: string;
   insitituion: string;
   course: string;
   description: string;

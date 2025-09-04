@@ -16,24 +16,6 @@ export const metadata: Metadata = {
   title: "Sol Monineath | Front-End Developer & Graphic Designer",
   description:
     "Personal Portfolio of Sol Monineath — a passionate front-end developer and Graphic designer crafting modern, responsive, and visually stunning web experiences. Explore my projects, skills, and creative journey.",
-  keywords: [
-    "Sol Monineath",
-    "Front-End Developer",
-    "Graphic Designer",
-    "Web Developer",
-    "Portfolio",
-    "Monineath Portfolio",
-  ],
-  authors: [{ name: "Sol Monineath" }],
-  creator: "Sol Monineath",
-  publisher: "Sol Monineath",
-  openGraph: {
-    title: "Sol Monineath | Front-End Developer & Graphic Designer",
-    description:
-      "Crafting modern and responsive web experiences with React, Next.js, and Tailwind CSS. Discover my projects and creative journey.",
-    url: "https://monineath-portfolio-five.vercel.app/",
-    siteName: "Sol Monineath Portfolio",
-  },
 };
 
 export default function RootLayout({
@@ -42,12 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

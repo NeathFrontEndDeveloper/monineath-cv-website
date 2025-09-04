@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { RefreshCw, MoveLeft } from "lucide-react";
-import { ContactType } from "@/constant/contact-type";
+import { ContactType } from "@/types/contact-admin-type";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +15,7 @@ export default function ContactDetailPage() {
   const router = useRouter();
 
   const handleBack = () => {
+    // setLoading(true);
     router.push("/contact-admin");
   };
 
@@ -71,24 +72,20 @@ export default function ContactDetailPage() {
   }
 
   return (
-    <div>
+    <>
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold text-gray-900">Contact Detail</h1>
-            <p className="text-gray-400">View your contact details</p>
-          </div>
-          <div>
-            <Button
-              variant="secondary_admin"
-              onClick={handleBack}
-              className="group flex items-center gap-2"
-            >
-              <MoveLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
-              Back to Contacts
-            </Button>
-          </div>
+        <div className="space-y-4">
+          <Button
+            variant="secondary_admin"
+            onClick={handleBack}
+            className="group flex items-center gap-2"
+          >
+            <MoveLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+            Back
+          </Button>
+          <h1 className="text-4xl font-bold text-gray-900">Contact Detail</h1>
+          <p className="text-gray-400">View your contact details</p>
         </div>
       </div>
 
@@ -146,6 +143,6 @@ export default function ContactDetailPage() {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 }

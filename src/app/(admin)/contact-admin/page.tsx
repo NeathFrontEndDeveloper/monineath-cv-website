@@ -7,7 +7,7 @@ const contact = () => {
       <div className="flex-1 min-w-0">
         {/* Title with Animation */}
         <div className="flex items-center gap-4 mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+          <h1 className="text-4xl font-bold text-gray-900">
             Contact Management
           </h1>
         </div>

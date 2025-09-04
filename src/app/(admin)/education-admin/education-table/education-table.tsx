@@ -13,7 +13,15 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  RefreshCw,
+  MoveRight,
+  Plus,
+  SquarePen,
+  Trash,
+  Eye,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -32,158 +40,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import type { educationTableType } from "@/constant/education-type";
-
-export const columns: ColumnDef<educationTableType>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "insitituion",
-    header: "Insitituion",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("insitituion")}</div>
-    ),
-  },
-  {
-    accessorKey: "course",
-    header: "Course",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("course")}</div>
-    ),
-  },
-  {
-    accessorKey: "description",
-    header: () => <div>Description</div>,
-    cell: ({ row }) => {
-      const description = row.getValue("description") as string;
-      return (
-        <div className="text-center w-40 overflow-hidden font-medium">
-          {description}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "date",
-    header: "Date",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("date")}</div>,
-  },
-  {
-    accessorKey: "location",
-    header: "Location",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("location")}</div>
-    ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const router = useRouter();
-      const education = row.original;
-      const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-      const handleView = () => {
-        router.push(
-          `/education-admin/education-detail/${education.documentId}`
-        );
-      };
-
-      const handleDelete = async () => {
-        try {
-          const res = await fetch(
-            `${BASE_URL}/api/educations?filters[documentId][$eq]=${education.documentId}`
-          );
-          const data = await res.json();
-
-          if (!data.data.length) {
-            console.error("Education not found");
-            return;
-          }
-
-          const id = data.data[0].id;
-
-          await fetch(`${BASE_URL}/api/educations/${id}`, {
-            method: "DELETE",
-          });
-
-          console.log("Deleted Education:", education.documentId);
-        } catch (error) {
-          console.error("Error deleting:", error);
-        }
-      };
-
-      return (
-        <div className="flex gap-2">
-          <Button variant="outline_admin" size="sm" onClick={handleView}>
-            View
-          </Button>
-          <Button variant="destructive" size="sm" onClick={handleDelete}>
-            Delete
-          </Button>
-        </div>
-      );
-    },
-  },
-];
+import type { educationTableType } from "@/types/education-admin-type";
 
 const EducationTable = () => {
   const [data, setData] = React.useState<educationTableType[]>([]);
   const [loading, setLoading] = React.useState(true);
-
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-  // Fetch contacts
-  React.useEffect(() => {
-    const fetchEducation = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/educations`);
-        const json = await res.json();
-        const items = json.data;
-
-        const getEducation: educationTableType[] = items.map((item: any) => ({
-          id: String(item.id),
-          documentId: item.documentId,
-          insitituion: item.insitituion,
-          course: item.course,
-          description: item.description,
-          date: item.date,
-          location: item.location,
-        }));
-
-        setData(getEducation);
-        console.log(getEducation, "===contacts===");
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEducation();
-  }, []);
-
+  const [createEduLoading, setCreateEduLoading] = React.useState(false);
+  const [editEduLoading, setEditEduLoading] = React.useState(false);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -191,6 +66,197 @@ const EducationTable = () => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const columns: ColumnDef<educationTableType>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "insitituion",
+      header: "Insitituion",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("insitituion")}</div>
+      ),
+    },
+    {
+      accessorKey: "course",
+      header: "Course",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("course")}</div>
+      ),
+    },
+    {
+      accessorKey: "description",
+      header: () => <div>Description</div>,
+      cell: ({ row }) => {
+        const description = row.getValue("description") as string;
+        return (
+          <div className="text-center w-40 overflow-hidden font-medium">
+            {description}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "date",
+      header: "Date",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("date")}</div>
+      ),
+    },
+    {
+      accessorKey: "location",
+      header: "Location",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("location")}</div>
+      ),
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const router = useRouter();
+        const education = row.original;
+        const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+        const handleView = () => {
+          router.push(
+            `/education-admin/education-detail/${education.documentId}`
+          );
+        };
+
+        const handleEdit = () => {
+          setEditEduLoading(true);
+          router.push(`/education-admin/education-edit/${education.id}`);
+        };
+
+        const handleDelete = async () => {
+          try {
+            const res = await fetch(
+              `${BASE_URL}/api/educations/${education.documentId}`,
+              {
+                method: "DELETE",
+              }
+            );
+
+            if (!res.ok) throw new Error("Failed to delete education");
+
+            console.log("Deleted Education:", education.documentId);
+
+            // ✅ Refetch to update table
+            fetchEducation();
+          } catch (error) {
+            console.error("Error deleting:", error);
+          }
+        };
+
+        return (
+          <div className="flex gap-2">
+            <Button variant="outline_admin" size="sm" onClick={handleView}>
+              <Eye className="h-4 w-4" />
+              View
+            </Button>
+            <Button variant="ghost_admin" size="sm" onClick={handleEdit}>
+              {editEduLoading ? (
+                <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
+              ) : (
+                <SquarePen className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+              )}
+              <span>{editEduLoading ? "Loading" : "Edit"}</span>
+            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="cursor-pointer"
+                >
+                  <Trash className="h-4 w-4" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. It will permanently delete
+                    this education record.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="cursor-pointer"
+                  >
+                    Yes, delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const router = useRouter();
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  // Fetch education
+  const fetchEducation = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/educations`);
+      const json = await res.json();
+      const items = json.data;
+
+      const getEducation: educationTableType[] = items.map((item: any) => ({
+        id: String(item.id),
+        documentId: item.documentId,
+        insitituion: item.insitituion,
+        course: item.course,
+        description: item.description,
+        date: item.date,
+        location: item.location,
+      }));
+
+      setData(getEducation);
+      console.log(getEducation, "===education===");
+    } catch (error) {
+      console.error("Error fetching education:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchEducation();
+  }, []);
+
+  const handleCreateEducation = () => {
+    setCreateEduLoading(true);
+    router.push("/education-admin/create-education");
+  };
 
   const table = useReactTable({
     data,
@@ -212,7 +278,11 @@ const EducationTable = () => {
   });
 
   if (loading) {
-    return <p className="p-4">Loading contacts...</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
+      </div>
+    );
   }
 
   return (
@@ -232,12 +302,31 @@ const EducationTable = () => {
           />
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline_admin" className="shrink-0">
-              <span className="mr-2">Columns</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
+          <div className="flex items-center space-x-2 ml-auto">
+            <div>
+              <Button
+                variant="outline_admin"
+                className="group flex items-center gap-2"
+                onClick={handleCreateEducation}
+                disabled={createEduLoading}
+              >
+                {createEduLoading ? (
+                  <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
+                ) : (
+                  <Plus className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+                )}
+                <span>
+                  {createEduLoading ? "Loading..." : "Create Education"}
+                </span>
+              </Button>
+            </div>
+            <DropdownMenuTrigger asChild>
+              <Button variant="primary_admin" className="shrink-0">
+                <span className="mr-2">Columns</span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+          </div>
           <DropdownMenuContent align="end" className="w-48">
             {table
               .getAllColumns()
@@ -342,11 +431,11 @@ const EducationTable = () => {
         </div>
         <div className="flex items-center space-x-2 order-1 sm:order-2">
           <Button
-            variant="outline_admin"
+            variant="primary_admin"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="transition-all duration-200 disabled:opacity-50"
+            className="py-5 px-4"
+            // disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
@@ -354,10 +443,11 @@ const EducationTable = () => {
             variant="outline_admin"
             size="sm"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="transition-all duration-200 disabled:opacity-50"
+            className="group flex items-center gap-2 py-5 px-4"
+            // disabled={!table.getCanNextPage()}
           >
             Next
+            <MoveRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
         </div>
       </div>
