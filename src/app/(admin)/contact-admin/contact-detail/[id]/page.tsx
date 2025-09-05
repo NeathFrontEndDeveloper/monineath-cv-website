@@ -42,6 +42,7 @@ export default function ContactDetailPage() {
         }
       } catch (err) {
         setError("Failed to fetch contact");
+        console.log(err);
       } finally {
         setLoading(false);
       }

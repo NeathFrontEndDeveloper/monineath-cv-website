@@ -65,9 +65,10 @@ const LoginForm = () => {
       });
 
       router.push("/dashboard");
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Login failed", {
-        description: err.message,
+        description:
+          err instanceof Error ? err.message : "An unknown error occurred",
       });
     } finally {
       setLoading(false);

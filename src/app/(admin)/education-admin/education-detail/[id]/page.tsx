@@ -57,7 +57,7 @@ export default function EducationDetailPage() {
     };
 
     if (id) education();
-  }, [id]);
+  }, [id, BASE_URL]);
 
   if (loading) {
     return (

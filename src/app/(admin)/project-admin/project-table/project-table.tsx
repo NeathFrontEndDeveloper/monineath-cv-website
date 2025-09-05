@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -38,16 +38,13 @@ import {
 import { ProjectAdminType } from "@/types/project-admin-type";
 
 const ProjectTable = () => {
-  const [projects, setProjects] = React.useState<ProjectAdminType[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [createProject, setCreateProject] = React.useState(false);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [projects, setProjects] = useState<ProjectAdminType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [createProject, setCreateProject] = useState(false);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
   const columns: ColumnDef<ProjectAdminType>[] = [
     {
@@ -131,11 +128,12 @@ const ProjectTable = () => {
       enableHiding: false,
       cell: ({ row }) => {
         const project = row.original;
+        console.log(project);
         return (
           <div className="flex gap-2">
-            {/* <Button variant="outline_admin" size="sm">
+            <Button variant="outline_admin" size="sm">
               View
-            </Button> */}
+            </Button>
             <Button variant="outline_admin" size="sm">
               Edit
             </Button>
@@ -171,14 +169,14 @@ const ProjectTable = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
         const res = await fetch(`${BASE_URL}/api/projects?populate=*`);
         const json = await res.json();
 
-        const getProject = json.data.map((item: any) => ({
+        const getProject = json.data.map((item: ProjectAdminType) => ({
           id: item.id,
           title: item.title,
           description: item.description,
@@ -199,14 +197,14 @@ const ProjectTable = () => {
     };
 
     fetchProjects();
-  }, []);
+  }, [BASE_URL]);
 
   const handleCreateProject = () => {
     setCreateProject(true);
     router.push("/project-admin/create-project");
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCreateProject(false);
   }, [pathname]);
 

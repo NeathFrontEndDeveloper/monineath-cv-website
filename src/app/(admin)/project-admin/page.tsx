@@ -1,21 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import ProjectTable from "./project-table/project-table";
-
-interface ProjectType {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  features: string;
-  techStack: string;
-  active: boolean;
-}
 
 const Project = () => {
   return (

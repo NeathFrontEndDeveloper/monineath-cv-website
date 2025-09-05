@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -53,19 +53,17 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import type { educationTableType } from "@/types/education-admin-type";
+import { Row } from "@tanstack/react-table";
 
 const EducationTable = () => {
-  const [data, setData] = React.useState<educationTableType[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [createEduLoading, setCreateEduLoading] = React.useState(false);
-  const [editEduLoading, setEditEduLoading] = React.useState(false);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [data, setData] = useState<educationTableType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [createEduLoading, setCreateEduLoading] = useState(false);
+  const [editEduLoading, setEditEduLoading] = useState(false);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
   const columns: ColumnDef<educationTableType>[] = [
     {
@@ -133,112 +131,121 @@ const EducationTable = () => {
     {
       id: "actions",
       enableHiding: false,
-      cell: ({ row }) => {
-        const router = useRouter();
-        const education = row.original;
-        const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-        const handleView = () => {
-          router.push(
-            `/education-admin/education-detail/${education.documentId}`
-          );
-        };
-
-        const handleEdit = () => {
-          setEditEduLoading(true);
-          router.push(`/education-admin/education-edit/${education.id}`);
-        };
-
-        const handleDelete = async () => {
-          try {
-            const res = await fetch(
-              `${BASE_URL}/api/educations/${education.documentId}`,
-              {
-                method: "DELETE",
-              }
-            );
-
-            if (!res.ok) throw new Error("Failed to delete education");
-
-            console.log("Deleted Education:", education.documentId);
-
-            // ✅ Refetch to update table
-            fetchEducation();
-          } catch (error) {
-            console.error("Error deleting:", error);
-          }
-        };
-
-        return (
-          <div className="flex gap-2">
-            <Button variant="outline_admin" size="sm" onClick={handleView}>
-              <Eye className="h-4 w-4" />
-              View
-            </Button>
-            <Button variant="ghost_admin" size="sm" onClick={handleEdit}>
-              {editEduLoading ? (
-                <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
-              ) : (
-                <SquarePen className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
-              )}
-              <span>{editEduLoading ? "Loading" : "Edit"}</span>
-            </Button>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="cursor-pointer"
-                >
-                  <Trash className="h-4 w-4" />
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. It will permanently delete
-                    this education record.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    className="cursor-pointer"
-                  >
-                    Yes, delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        );
-      },
+      cell: ({ row }) => (
+        <ActionCell row={row} fetchEducation={fetchEducation} />
+      ),
     },
   ];
+
+  const ActionCell = ({
+    row,
+    fetchEducation,
+  }: {
+    row: Row<educationTableType>;
+    fetchEducation: () => void;
+  }) => {
+    const router = useRouter();
+    const education = row.original;
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    const handleView = () => {
+      router.push(`/education-admin/education-detail/${education.documentId}`);
+    };
+
+    const handleEdit = () => {
+      setEditEduLoading(true);
+      router.push(`/education-admin/education-edit/${education.id}`);
+    };
+
+    const handleDelete = async () => {
+      try {
+        const res = await fetch(
+          `${BASE_URL}/api/educations/${education.documentId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to delete education");
+
+        console.log("Deleted Education:", education.documentId);
+
+        // Refetch to update table
+        fetchEducation();
+      } catch (error) {
+        console.error("Error deleting:", error);
+      }
+    };
+
+    return (
+      <div className="flex gap-2">
+        <Button variant="outline_admin" size="sm" onClick={handleView}>
+          <Eye className="h-4 w-4" />
+          View
+        </Button>
+        <Button variant="ghost_admin" size="sm" onClick={handleEdit}>
+          {editEduLoading ? (
+            <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
+          ) : (
+            <SquarePen className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+          )}
+          <span>{editEduLoading ? "Loading" : "Edit"}</span>
+        </Button>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm" className="cursor-pointer">
+              <Trash className="h-4 w-4" />
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. It will permanently delete this
+                education record.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="cursor-pointer"
+              >
+                Yes, delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    );
+  };
 
   const router = useRouter();
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   // Fetch education
-  const fetchEducation = async () => {
+  const fetchEducation = useCallback(async () => {
     try {
       const res = await fetch(`${BASE_URL}/api/educations`);
       const json = await res.json();
       const items = json.data;
 
-      const getEducation: educationTableType[] = items.map((item: any) => ({
-        id: String(item.id),
-        documentId: item.documentId,
-        insitituion: item.insitituion,
-        course: item.course,
-        description: item.description,
-        date: item.date,
-        location: item.location,
-      }));
+      // const items: educationType[] = json.data;
+
+      const getEducation: educationTableType[] = items.map(
+        (item: educationTableType): educationTableType => ({
+          id: String(item.id),
+          documentId: item.documentId,
+          createdAt: item.createdAt,
+          insitituion: item.insitituion,
+          course: item.course,
+          description: item.description,
+          date: item.date,
+          location: item.location,
+        })
+      );
 
       setData(getEducation);
       console.log(getEducation, "===education===");
@@ -247,11 +254,11 @@ const EducationTable = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [BASE_URL]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchEducation();
-  }, []);
+  }, [fetchEducation]);
 
   const handleCreateEducation = () => {
     setCreateEduLoading(true);

@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -51,50 +51,16 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import type { contactTableType } from "@/types/contact-admin-type";
+import type { contactTableType, ContactType } from "@/types/contact-admin-type";
+import { Row } from "@tanstack/react-table";
 
 const ContactTable = () => {
-  const [data, setData] = React.useState<contactTableType[]>([]);
-  const [loading, setLoading] = React.useState(true);
-
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-  // Fetch contacts
-
-  const fetchContacts = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/api/contacts`);
-      const json = await res.json();
-      const items = json.data;
-
-      const getContacts: contactTableType[] = items.map((item: any) => ({
-        id: String(item.id),
-        documentId: item.documentId,
-        fullName: item.fullName,
-        email: item.email,
-        message: item.message,
-      }));
-
-      setData(getContacts);
-      console.log(getContacts, "===contacts===");
-    } catch (error) {
-      console.error("Error fetching contacts:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchContacts();
-  }, []);
-
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const [data, setData] = useState<contactTableType[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const columns: ColumnDef<contactTableType>[] = [
     {
@@ -158,77 +124,113 @@ const ContactTable = () => {
     {
       id: "actions",
       enableHiding: false,
-      cell: ({ row }) => {
-        const router = useRouter();
-        const contact = row.original;
-        const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-        const handleView = () => {
-          router.push(`/contact-admin/contact-detail/${contact.documentId}`);
-        };
-
-        const handleDelete = async () => {
-          try {
-            const res = await fetch(
-              `${BASE_URL}/api/contacts/${contact.documentId}`,
-              {
-                method: "DELETE",
-              }
-            );
-
-            if (!res.ok) throw new Error("Failed to delete education");
-
-            console.log("Deleted Education:", contact.documentId);
-
-            // ✅ Refetch to update table
-            fetchContacts();
-          } catch (error) {
-            console.error("Error deleting:", error);
-          }
-        };
-
-        return (
-          <div className="flex gap-2">
-            <Button variant="outline_admin" size="sm" onClick={handleView}>
-              <Eye className="h-4 w-4" />
-              View
-            </Button>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="cursor-pointer"
-                >
-                  <Trash className="h-4 w-4" />
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. It will permanently delete
-                    this education record.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    className="cursor-pointer"
-                  >
-                    Yes, delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        );
-      },
+      cell: ({ row }) => <ActionCell row={row} fetchContacts={fetchContacts} />,
     },
   ];
+
+  const ActionCell = ({
+    row,
+    fetchContacts,
+  }: {
+    row: Row<contactTableType>;
+    fetchContacts: () => void;
+  }) => {
+    const router = useRouter();
+    const contact = row.original;
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    const handleView = () => {
+      router.push(`/contact-admin/contact-detail/${contact.documentId}`);
+    };
+
+    const handleDelete = async () => {
+      try {
+        const res = await fetch(
+          `${BASE_URL}/api/contacts/${contact.documentId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to delete contact");
+
+        console.log("Deleted Contact:", contact.documentId);
+
+        // Refetch to update table
+        fetchContacts();
+      } catch (error) {
+        console.error("Error deleting:", error);
+      }
+    };
+
+    return (
+      <div className="flex gap-2">
+        <Button variant="outline_admin" size="sm" onClick={handleView}>
+          <Eye className="h-4 w-4" />
+          View
+        </Button>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm" className="cursor-pointer">
+              <Trash className="h-4 w-4" />
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. It will permanently delete this
+                contact record.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="cursor-pointer"
+              >
+                Yes, delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    );
+  };
+
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  // Fetch contacts
+  const fetchContacts = useCallback(async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/contacts`);
+      const json = await res.json();
+      const items = json.data;
+
+      const getContacts: contactTableType[] = items.map(
+        (item: ContactType): contactTableType => ({
+          id: String(item.id),
+          documentId: item.documentId,
+          fullName: item.fullName,
+          email: item.email,
+          message: item.message,
+        })
+      );
+
+      setData(getContacts);
+      console.log(getContacts, "===contacts===");
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [BASE_URL]);
+
+  useEffect(() => {
+    fetchContacts();
+  }, [fetchContacts]);
 
   const table = useReactTable({
     data,

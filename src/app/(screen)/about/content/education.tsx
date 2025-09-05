@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  GraduationCap,
-  Calendar,
-  MapPin,
-  Award,
-  BookOpen,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { Calendar, MapPin, Award, ChevronDown, ChevronUp } from "lucide-react";
 import { education } from "@/constant/data";
 import { motion } from "framer-motion";
 

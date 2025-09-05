@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, createElement } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  createElement,
+  useCallback,
+  useMemo,
+} from "react";
 import { gsap } from "gsap";
 import type { TextTypeProps } from "@/types/text-typing-type";
 
@@ -33,18 +40,21 @@ const TextType: React.FC<TextTypeProps> = ({
   const cursorRef = useRef<HTMLSpanElement | null>(null);
   const containerRef = useRef<HTMLElement | null>(null);
 
-  const textArray = Array.isArray(text) ? text : [text];
+  const textArray = useMemo(
+    () => (Array.isArray(text) ? text : [text]),
+    [text]
+  );
 
-  const getRandomSpeed = () => {
+  const getRandomSpeed = useCallback(() => {
     if (!variableSpeed) return typingSpeed;
     const { min, max } = variableSpeed;
     return Math.random() * (max - min) + min;
-  };
+  }, [variableSpeed, typingSpeed]);
 
-  const getCurrentTextColor = () => {
-    if (textColors.length === 0) return "#00ff7b";
+  const getCurrentTextColor = useCallback(() => {
+    if (textColors.length == 0) return "#00ff7b";
     return textColors[currentTextIndex % textColors.length];
-  };
+  }, [textColors, currentTextIndex]);
 
   useEffect(() => {
     if (!startOnVisible || !containerRef.current) return;
@@ -138,6 +148,7 @@ const TextType: React.FC<TextTypeProps> = ({
     reverseMode,
     variableSpeed,
     onSentenceComplete,
+    getRandomSpeed,
   ]);
 
   const shouldHideCursor =
@@ -147,7 +158,7 @@ const TextType: React.FC<TextTypeProps> = ({
   return createElement(
     Component,
     {
-      ref: containerRef as React.Ref<any>,
+      ref: containerRef as React.Ref<HTMLElement>,
       className: `inline-block whitespace-pre-wrap tracking-tight ${className}`,
       ...props,
     },
