@@ -12,9 +12,17 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white shadow-xs hover:bg-destructive/80 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "border border-[#00ff7b] text-md text-[#00ff7b] bg-transparent shadow-[0_0_0_1px_#00ff7b] hover:shadow-[0_0_12px_3px_#00ff7b] hover:bg-[#00ff7b] hover:text-[#1c1c22] transition-shadow duration-300 dark:bg-input/30 dark:border-input dark:hover:bg-input/50 cursor-pointer",
+        outline_admin:
+          "border border-blue-500 text-base text-blue-500 bg-transparent hover:bg-blue-500 hover:text-white transition duration-300 ease-in-out dark:border-input dark:bg-input/30 dark:hover:bg-input/50 cursor-pointer",
+        primary_admin:
+          "bg-blue-500 text-white hover:bg-blue-400 transition duration-300 ease-in-out dark:bg-gray-900 dark:hover:bg-gray-800 cursor-pointer",
+        secondary_admin:
+          "bg-transparent text-blue-500 hover:text-blue-300 transition-all duration-300 cursor-pointer",
+        ghost_admin:
+          "bg-green-500 text-white hover:bg-green-400 transition-all duration-300 cursor-pointer",
         secondary:
           "bg-[#00ff7b] text-[#1c1c22] shadow-[0_0_0_1px_#00ff7b] hover:bg-transparent hover:text-[#00ff7b] hover:shadow-[0_0_12px_3px_#00ff7b] hover:border hover:border-[#00ff7b] transition-shadow transition-colors duration-300 cursor-pointer",
         ghost:

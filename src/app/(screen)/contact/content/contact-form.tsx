@@ -24,7 +24,7 @@ import { IoSend } from "react-icons/io5";
 
 // Enhanced validation schema with better error messages
 const contactSchema = z.object({
-  full_name: z.string().nonempty({ message: "Full Name is required" }),
+  fullName: z.string().nonempty({ message: "Full Name is required" }),
 
   email: z
     .string()
@@ -44,30 +44,39 @@ interface ContactFormProps {
   className?: string;
 }
 
-const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
+const ContactForm = ({ className = "" }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
-      full_name: "",
+      fullName: "",
       email: "",
       message: "",
     },
   });
 
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const handleSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
 
     try {
-      if (onSubmit) {
-        await onSubmit(data);
-      } else {
-        // Default behavior - show toast with formatted data
-        toast.success("Message sent successfully!", {
-          description: `Thank you, ${data.full_name}! We'll get back to you soon.`,
-        });
+      const res = await fetch(`${BASE_URL}/api/contacts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to send message");
       }
+
+      toast.success("Message sent successfully!", {
+        description: `Thank you, ${data.fullName}! We'll get back to you soon.`,
+      });
 
       form.reset();
     } catch (error) {
@@ -102,7 +111,7 @@ const ContactForm = ({ onSubmit, className = "" }: ContactFormProps) => {
         >
           <FormField
             control={form.control}
-            name="full_name"
+            name="fullName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-lg text-white">
