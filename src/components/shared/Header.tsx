@@ -32,7 +32,7 @@ const Header = () => {
           {/* Logo */}
           <Link
             href="/"
-            className="text-2xl font-bold text-white hover:text-[#00ff99] transition-colors duration-300"
+            className="text-lg md:text-xl lg:text-2xl font-bold text-white hover:text-[#00ff99] transition-colors duration-300"
           >
             {APP_NAME}
           </Link>

@@ -63,7 +63,7 @@ const StackedCircularFooter = memo(() => {
           <div className="rounded-full bg-primary/10 p-8 transition-transform duration-300 hover:scale-105">
             <Link
               href="/"
-              className="text-4xl font-bold text-white hover:text-[#00ff99] transition-colors duration-300"
+              className="text-xl md:text-2xl lg:text-4xl font-bold text-white hover:text-[#00ff99] transition-colors duration-300"
               aria-label="Go to homepage"
             >
               {APP_NAME}
