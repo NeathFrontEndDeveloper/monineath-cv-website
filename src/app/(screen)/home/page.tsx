@@ -3,6 +3,7 @@
 import AboutSection from "./content/AboutSection";
 import HeroSection from "./content/HeroSection";
 import SkillSection from "./content/SkillSection";
+import ContactBanner from "./content/ContactBanner";
 
 const Home = () => {
   // Functions
@@ -18,6 +19,8 @@ const Home = () => {
         <AboutSection />
         {/* SkillSection */}
         <SkillSection />
+        {/* Contact banner */}
+        <ContactBanner />
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { Code2, Database, Cloud, Palette } from "lucide-react";
+import { Code2, Database, Cloud, Palette, Figma } from "lucide-react";
 import Telegram from "@/components/font-awsome-icon/Telegram";
 import Facebook from "@/components/font-awsome-icon/Facebook";
 import Linkedin from "@/components/font-awsome-icon/Linkedin";
@@ -101,7 +101,7 @@ export const skillsData = [
       { name: "Adobe Illustrator", level: 90, color: "#FF61F6" },
       { name: "Git", level: 80, color: "#F05032" },
       { name: "VS Code", level: 95, color: "#007ACC" },
-      { name: "Photoshop", level: 85, color: "#31A8FF" },
+      { name: "Photoshop", level: 70, color: "#31A8FF" },
     ],
   },
 ];
@@ -160,5 +160,29 @@ export const certifications: Certification[] = [
     credential_id: "CKA-2022-009876",
     description:
       "Demonstrates skills in Kubernetes cluster administration and management.",
+  },
+];
+
+// skill section
+export const skills = [
+  {
+    name: "React & Next.js",
+    icon: Code2,
+    description: "Building modern web applications",
+  },
+  {
+    name: "TypeScript",
+    icon: Code2,
+    description: "Type-safe development",
+  },
+  {
+    name: "Tailwind CSS",
+    icon: Palette,
+    description: "Beautiful, responsive designs",
+  },
+  {
+    name: "Figma",
+    icon: Figma,
+    description: "UX/UI Design",
   },
 ];

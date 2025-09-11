@@ -1,30 +1,8 @@
 import React from "react";
-import { Code2, MoveRight, Database, Palette } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSkills } from "@/constant/functions";
-
-const skills = [
-  {
-    name: "React & Next.js",
-    icon: Code2,
-    description: "Building modern web applications",
-  },
-  {
-    name: "TypeScript",
-    icon: Code2,
-    description: "Type-safe development",
-  },
-  {
-    name: "Tailwind CSS",
-    icon: Palette,
-    description: "Beautiful, responsive designs",
-  },
-  {
-    name: "Node.js",
-    icon: Database,
-    description: "Backend & API development",
-  },
-];
+import { skills } from "@/constant/data";
 
 const SkillSection: React.FC = () => {
   const viewMore = useSkills();
