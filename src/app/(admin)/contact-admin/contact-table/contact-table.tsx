@@ -13,14 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  RefreshCw,
-  MoveRight,
-  Trash,
-  Eye,
-} from "lucide-react";
+import { ChevronDown, RefreshCw, MoveRight, Trash, Eye } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -94,28 +87,18 @@ const ContactTable = () => {
     },
     {
       accessorKey: "email",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Email
-            <ArrowUpDown />
-          </Button>
-        );
-      },
+      header: "Email",
       cell: ({ row }) => (
         <div className="lowercase">{row.getValue("email")}</div>
       ),
     },
     {
       accessorKey: "message",
-      header: () => <div>Message</div>,
+      header: "Message",
       cell: ({ row }) => {
         const message = row.getValue("message") as string;
         return (
-          <div className="text-center w-40 overflow-hidden font-medium">
+          <div className="text-start w-40 overflow-hidden font-medium">
             {message}
           </div>
         );

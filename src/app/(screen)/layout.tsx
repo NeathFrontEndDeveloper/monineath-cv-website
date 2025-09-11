@@ -11,12 +11,19 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${BG}`}>
+    <div className={`${BG} flex min-h-screen flex-col`}>
+      {/* Notifications */}
       <Toaster richColors position="top-center" />
+
+      {/* Header (fixed) */}
       <div className="fixed top-0 left-0 w-full z-50">
         <Header />
       </div>
-      <main className="mt-24 mb-16">{children}</main>
+
+      {/* Main content with padding to avoid overlap */}
+      <main className="flex-1 pt-20">{children}</main>
+
+      {/* Footer at bottom */}
       <Footer />
     </div>
   );
