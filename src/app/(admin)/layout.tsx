@@ -3,6 +3,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/admin/app-sidebar";
 import NotificationIcon from "@/components/admin/notification-icon";
+import LoadingScreen from "@/components/shared/Loading";
 
 export default function AdminLayout({
   children,
@@ -21,6 +22,7 @@ export default function AdminLayout({
             </div>
           </header>
           <main className="flex-1 overflow-auto p-8 bg-gray-100">
+            <LoadingScreen />
             {children}
           </main>
         </div>

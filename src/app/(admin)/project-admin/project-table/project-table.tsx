@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -15,7 +15,27 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ChevronDown, RefreshCw, MoveRight, Plus } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import {
+  ChevronDown,
+  RefreshCw,
+  MoveRight,
+  Plus,
+  SquarePen,
+  Eye,
+  Trash,
+} from "lucide-react";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -35,16 +55,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { ProjectAdminType } from "@/types/project-admin-type";
+import { ProjectAdminType } from "@/types/project-type";
+import { Row } from "@tanstack/react-table";
+import { useLoading } from "@/store/Loading/useLoading";
 
 const ProjectTable = () => {
   const [projects, setProjects] = useState<ProjectAdminType[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
+  const [editProjectLoading, setEditProjectLoading] = useState(false);
   const [createProject, setCreateProject] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const setPageLoading = useLoading.getState().setPageLoading;
 
   const columns: ColumnDef<ProjectAdminType>[] = [
     {
@@ -96,9 +121,9 @@ const ProjectTable = () => {
           <Image
             src={imageUrl}
             alt="project image"
-            width={48}
-            height={48}
-            className="h-12 w-12 object-cover rounded-md"
+            width={100}
+            height={100}
+            className="h-12 w-12 object-cover rounded-full"
           />
         ) : (
           <span className="text-gray-400">No Image</span>
@@ -126,25 +151,94 @@ const ProjectTable = () => {
     {
       id: "actions",
       enableHiding: false,
-      cell: ({ row }) => {
-        const project = row.original;
-        console.log(project);
-        return (
-          <div className="flex gap-2">
-            <Button variant="outline_admin" size="sm">
-              View
-            </Button>
-            <Button variant="outline_admin" size="sm">
-              Edit
-            </Button>
-            <Button variant="destructive" size="sm">
-              Delete
-            </Button>
-          </div>
-        );
-      },
+      cell: ({ row }) => <ActionCell row={row} fetchProjects={fetchProjects} />,
     },
   ];
+
+  const ActionCell = ({
+    row,
+    fetchProjects,
+  }: {
+    row: Row<ProjectAdminType>;
+    fetchProjects: () => void;
+  }) => {
+    const router = useRouter();
+    const project = row.original;
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    const handleView = () => {
+      router.push(`/project-admin/project-detial/${project.documentId}`);
+    };
+
+    const handleEdit = () => {
+      setEditProjectLoading(true);
+      router.push(`/project-admin/edit-project/${project.id}`);
+    };
+
+    const handleDelete = async () => {
+      try {
+        const res = await fetch(
+          `${BASE_URL}/api/projects/${project.documentId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to delete education");
+
+        console.log("Deleted Project:", project.documentId);
+
+        // Refetch to update table
+        fetchProjects();
+      } catch (error) {
+        console.error("Error deleting:", error);
+      }
+    };
+
+    return (
+      <div className="flex gap-2">
+        <Button variant="outline_admin" size="sm" onClick={handleView}>
+          <Eye className="h-4 w-4" />
+          View
+        </Button>
+        <Button variant="ghost_admin" size="sm" onClick={handleEdit}>
+          {editProjectLoading ? (
+            <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
+          ) : (
+            <SquarePen className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+          )}
+          <span>{editProjectLoading ? "Loading" : "Edit"}</span>
+        </Button>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm" className="cursor-pointer">
+              <Trash className="h-4 w-4" />
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. It will permanently delete this
+                education record.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="cursor-pointer"
+              >
+                Yes, delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    );
+  };
 
   const table = useReactTable({
     data: projects,
@@ -169,33 +263,36 @@ const ProjectTable = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`${BASE_URL}/api/projects?populate=*`);
-        const json = await res.json();
+  const fetchProjects = async () => {
+    try {
+      setPageLoading(true);
+      const res = await fetch(`${BASE_URL}/api/projects?populate=*`);
+      const json = await res.json();
 
-        const getProject = json.data.map((item: ProjectAdminType) => ({
+      const getProject = json.data.map((item: any) => {
+        const imageUrl = item.image?.url ? `${BASE_URL}${item.image.url}` : "";
+
+        return {
           id: item.id,
           title: item.title,
           description: item.description,
           features: item.features,
           techStack: item.techStack,
-          // image: item.attributes.image?.data?.attributes?.url
-          //   ? `${BASE_URL}${item.attributes.image.data.attributes.url}`
-          //   : "",
-        }));
+          image: imageUrl,
+          documentId: item.documentId,
+        };
+      });
 
-        setProjects(getProject);
-        console.log(getProject, "===projects===");
-      } catch (err) {
-        console.error("Error fetching projects:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setProjects(getProject);
+      console.log(getProject, "===projects===");
+    } catch (err) {
+      console.error("Error fetching projects:", err);
+    } finally {
+      setPageLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProjects();
   }, [BASE_URL]);
 
@@ -207,14 +304,6 @@ const ProjectTable = () => {
   useEffect(() => {
     setCreateProject(false);
   }, [pathname]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
-      </div>
-    );
-  }
 
   return (
     <div className="w-full">

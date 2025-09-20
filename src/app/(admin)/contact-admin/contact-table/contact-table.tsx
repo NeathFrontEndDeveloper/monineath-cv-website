@@ -44,7 +44,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import type { contactTableType, ContactType } from "@/types/contact-admin-type";
+import type { contactTableType, ContactType } from "@/types/contact-type";
 import { Row } from "@tanstack/react-table";
 
 const ContactTable = () => {

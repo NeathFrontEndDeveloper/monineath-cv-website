@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { educationType } from "@/types/education-admin-type";
+import { educationType } from "@/types/education-type";
 import { RefreshCw, MoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 // import { Textarea } from "@/components/ui/textarea";
 
-export default function EducationDetailPage() {
+const EducationDetailPage = () => {
   const { id } = useParams();
   const [education, setEducation] = useState<educationType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -213,4 +213,6 @@ export default function EducationDetailPage() {
       </div>
     </>
   );
-}
+};
+
+export default EducationDetailPage;

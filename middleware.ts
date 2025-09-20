@@ -6,7 +6,13 @@ export function middleware(request: NextRequest) {
 
   const token = request.cookies.get("token")?.value;
 
-  if (request.nextUrl.pathname.startsWith("/dashboard")) {
+  // Protect everything inside the "admin" group
+  if (
+    request.nextUrl.pathname.startsWith("/dashboard") ||
+    request.nextUrl.pathname.startsWith("/contact-admin") ||
+    request.nextUrl.pathname.startsWith("/education-admin") ||
+    request.nextUrl.pathname.startsWith("/project-admin")
+  ) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
@@ -16,5 +22,14 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/contact-admin/:path*",
+    "/education-admin/:path*",
+    "/project-admin/:path*",
+  ],
 };
+
+// export const config = {
+//   matcher: ["/((dashboard|contact-admin|education-admin|project-admin))/ :path*"],
+// };

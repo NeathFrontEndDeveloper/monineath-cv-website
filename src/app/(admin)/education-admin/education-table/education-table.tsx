@@ -52,18 +52,20 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import type { educationTableType } from "@/types/education-admin-type";
+import type { educationTableType } from "@/types/education-type";
 import { Row } from "@tanstack/react-table";
+import { useLoading } from "@/store/Loading/useLoading";
 
 const EducationTable = () => {
   const [data, setData] = useState<educationTableType[]>([]);
-  const [loading, setLoading] = useState(true);
   const [createEduLoading, setCreateEduLoading] = useState(false);
   const [editEduLoading, setEditEduLoading] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const setPageLoading = useLoading.getState().setPageLoading;
 
   const columns: ColumnDef<educationTableType>[] = [
     {
@@ -252,7 +254,7 @@ const EducationTable = () => {
     } catch (error) {
       console.error("Error fetching education:", error);
     } finally {
-      setLoading(false);
+      setPageLoading(false);
     }
   }, [BASE_URL]);
 
@@ -283,14 +285,6 @@ const EducationTable = () => {
       rowSelection,
     },
   });
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
-      </div>
-    );
-  }
 
   return (
     <div className="w-full space-y-4 mt-4">

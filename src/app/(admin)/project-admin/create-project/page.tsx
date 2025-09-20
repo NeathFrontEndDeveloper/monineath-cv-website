@@ -20,31 +20,37 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { RefreshCw, Plus, MoveLeft } from "lucide-react";
+import { useLoading } from "@/store/Loading/useLoading";
 
 const ProjectFormSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters.",
-  }),
-  features: z.string().min(2, {
-    message: "Features must be at least 2 characters.",
-  }),
-  techStack: z.string().min(2, {
-    message: "Tech Stack must be at least 2 characters.",
-  }),
+  title: z
+    .string()
+    // .nonempty({ message: "This field can't be empty" })
+    .optional(),
+  description: z
+    .string()
+    // .nonempty({ message: "This field can't be empty" })
+    .optional(),
+
+  features: z
+    .string()
+    // .nonempty({ message: "This field can't be empty" })
+    .optional(),
+  techStack: z
+    .string()
+    // .nonempty({ message: "This field can't be empty" })
+    .optional(),
 });
 
 type ProjectFormValues = z.infer<typeof ProjectFormSchema>;
 
 const CreateProjectForm = () => {
   const [image, setImage] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [createProjectLoading, setCreateProjectLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const { pageLoading } = useLoading();
+  const setPageLoading = useLoading.getState().setPageLoading;
 
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -59,48 +65,63 @@ const CreateProjectForm = () => {
   });
 
   const onSubmit = async (values: ProjectFormValues) => {
+    setPageLoading(true);
+
     try {
+      let imageId = null;
+      if (image) {
+        const formData = new FormData();
+        formData.append("files", image);
+
+        const uploadRes = await fetch(`${BASE_URL}/api/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          const error = await uploadRes.json();
+          throw new Error(error?.error?.message || "Failed to upload image.");
+        }
+
+        const uploadResult = await uploadRes.json();
+        imageId = uploadResult[0].id;
+      }
+
+      const projectData = {
+        ...values,
+        image: imageId,
+      };
+
       const res = await fetch(`${BASE_URL}/api/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-
-        body: JSON.stringify({ data: values }),
+        body: JSON.stringify({ data: projectData }),
       });
 
-      const result = await res.json();
-
       if (!res.ok) {
-        throw new Error(result?.error?.message || "Failed to create project");
+        const error = await res.json();
+        throw new Error(error?.error?.message || "Failed to create project.");
       }
 
-      router.push("/project-admin");
-      setCreateProjectLoading(true);
-
+      const result = await res.json();
       console.log("Project created:", result);
+      router.push("/project-admin");
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setPageLoading(false);
     }
   };
 
   React.useEffect(() => {
-    setCreateProjectLoading(false);
+    setPageLoading(false);
   }, [pathname]);
 
   const handleBack = () => {
     router.push("/project-admin");
   };
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
@@ -257,6 +278,9 @@ const CreateProjectForm = () => {
               </FormDescription>
               <FormMessage />
             </FormItem>
+
+            {/* active boolean */}
+            <div></div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
@@ -265,7 +289,7 @@ const CreateProjectForm = () => {
               variant="outline_admin"
               className="flex-1 sm:flex-none"
               onClick={() => form.reset()}
-              disabled={loading}
+              // disabled={loadin`g}
             >
               Reset Form
             </Button>
@@ -275,14 +299,12 @@ const CreateProjectForm = () => {
               className="group flex items-center gap-2"
               // disabled={loading || !form.formState.isValid}
             >
-              {createProjectLoading ? (
+              {pageLoading ? (
                 <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
               ) : (
                 <Plus className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
               )}
-              <span>
-                {createProjectLoading ? "Loading..." : "Create Project"}
-              </span>
+              <span>{pageLoading ? "Loading..." : "Create Project"}</span>
             </Button>
           </div>
         </form>

@@ -58,7 +58,9 @@ const LoginForm = () => {
       }
 
       // Save token (example: localStorage)
-      localStorage.setItem("token", result.jwt);
+      document.cookie = `token=${
+        result.jwt
+      }; path=/; secure; samesite=strict; max-age=${60 * 60 * 24}`;
 
       toast.success("Login successful!", {
         description: `Welcome back, ${result.user.username}`,

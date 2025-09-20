@@ -21,6 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Logout } from "@/lib/auth";
 
 // Main navigation items
 const navigationItems = [
@@ -96,7 +97,10 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-gray-100 p-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="text-red-600 hover:bg-red-50 hover:text-red-700">
+            <SidebarMenuButton
+              onClick={Logout}
+              className="text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
               <LogOut className="h-4 w-4" />
               <span>Sign Out</span>
             </SidebarMenuButton>

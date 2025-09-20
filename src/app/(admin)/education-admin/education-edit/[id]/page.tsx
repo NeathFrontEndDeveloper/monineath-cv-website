@@ -3,7 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { educationType } from "@/types/education-admin-type";
+import { educationType } from "@/types/education-type";
 import { RefreshCw, MoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

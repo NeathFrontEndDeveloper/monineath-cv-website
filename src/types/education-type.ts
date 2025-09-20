@@ -1,18 +1,21 @@
-export interface Education {
-  id: number;
-  field: string;
-  institution: string;
-  location: string;
-  period: string;
+export interface educationTableType {
+  id: string;
+  documentId: string;
+  createdAt: string;
+  insitituion: string;
+  course: string;
   description: string;
-  achievements?: string[];
+  date: string;
+  location: string;
 }
 
-export interface Certification {
+export interface educationType {
   id: number;
-  title: string;
-  issuer: string;
-  date: string;
-  credential_id?: string;
+  documentId: string;
+  createdAt: string;
+  insitituion: string;
+  course: string;
   description: string;
+  date: string;
+  location: string;
 }

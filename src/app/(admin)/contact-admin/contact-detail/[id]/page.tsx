@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { RefreshCw, MoveLeft } from "lucide-react";
-import { ContactType } from "@/types/contact-admin-type";
+import { ContactType } from "@/types/contact-type";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
