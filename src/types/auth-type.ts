@@ -1,14 +1,17 @@
-export interface AuthType {
+export interface User {
+  id: string | number;
   username: string;
-  email: string;
-  password: string;
+  email?: string;
 }
 
-export interface AuthState extends AuthType {
-  user: AuthType | null;
-  isLoading: boolean;
+export interface AuthType {
+  token: string | null;
+  user: User | null;
+  loading: boolean;
   error: string | null;
-  setAuth: (user: AuthType | null) => void;
-  login: (credentials: AuthType) => Promise<void>;
-  logout: () => void;
+
+  setAuth: (token: string, user: User) => void;
+  clearAuth: () => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
 }

@@ -21,7 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Logout } from "@/lib/auth";
+import { Logout } from "@/store/auth/useAuth";
 
 // Main navigation items
 const navigationItems = [
