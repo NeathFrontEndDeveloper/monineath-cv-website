@@ -57,6 +57,7 @@ import { ProjectAdminType } from "@/types/project-type";
 import { Row } from "@tanstack/react-table";
 import { useLoading } from "@/store/Loading/use-loading-store";
 import LoadingScreen from "@/components/shared/Loading";
+import api from "@/lib/request";
 
 const ProjectTable = () => {
   const [projects, setProjects] = useState<ProjectAdminType[]>([]);
@@ -119,8 +120,8 @@ const ProjectTable = () => {
           <Image
             src={imageUrl}
             alt="project image"
-            width={100}
-            height={100}
+            width={70}
+            height={70}
             className="h-12 w-12 object-cover rounded-full"
           />
         ) : (
@@ -264,8 +265,8 @@ const ProjectTable = () => {
   const fetchProjects = useCallback(async () => {
     try {
       setPageLoading(true);
-      const res = await fetch(`${BASE_URL}/api/projects?populate=*`);
-      const json = await res.json();
+      const res = await api.get("/projects?populate=*");
+      const json = await res.data;
 
       const getProject = json.data.map((item: ProjectAdminType) => {
         const imageUrl = item.image?.url ? `${BASE_URL}${item.image.url}` : "";

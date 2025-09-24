@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
 import api from "@/lib/request";
+import { useAuthStore } from "@/store/auth/useAuth";
 
 const LoginSchema = z.object({
   identifier: z
@@ -29,8 +29,9 @@ const LoginSchema = z.object({
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
 const LoginForm = () => {
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const { loading, setLoading, setAuth, setError } = useAuthStore();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginSchema),
@@ -42,11 +43,16 @@ const LoginForm = () => {
 
   async function onSubmit(data: LoginFormValues) {
     try {
+      setLoading(true);
+      setError(null);
+
       const { data: result } = await api.post("/auth/local", data);
 
       document.cookie = `token=${
         result.jwt
       }; path=/; secure; samesite=strict; max-age=${60 * 60 * 24}`;
+
+      setAuth(result.jwt, result.user);
 
       toast.success("Login successful!", {
         description: `Welcome back, ${result.user.username}`,
@@ -54,9 +60,12 @@ const LoginForm = () => {
 
       router.push("/dashboard");
     } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "An unknown error occurred";
+      setError(message);
+
       toast.error("Login failed", {
-        description:
-          err instanceof Error ? err.message : "An unknown error occurred",
+        description: message,
       });
     } finally {
       setLoading(false);
