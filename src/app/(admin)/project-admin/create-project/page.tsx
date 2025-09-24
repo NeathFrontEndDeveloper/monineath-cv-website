@@ -4,7 +4,6 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,33 +19,38 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { RefreshCw, Plus, MoveLeft } from "lucide-react";
+import { useLoading } from "@/store/Loading/use-loading-store";
+import api from "@/lib/request";
+import Image from "next/image";
 
 const ProjectFormSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters.",
-  }),
-  features: z.string().min(2, {
-    message: "Features must be at least 2 characters.",
-  }),
-  techStack: z.string().min(2, {
-    message: "Tech Stack must be at least 2 characters.",
-  }),
+  title: z
+    .string()
+    // .nonempty({ message: "This field can't be empty" })
+    .optional(),
+  description: z
+    .string()
+    // .nonempty({ message: "This field can't be empty" })
+    .optional(),
+
+  features: z
+    .string()
+    // .nonempty({ message: "This field can't be empty" })
+    .optional(),
+  techStack: z
+    .string()
+    // .nonempty({ message: "This field can't be empty" })
+    .optional(),
 });
 
 type ProjectFormValues = z.infer<typeof ProjectFormSchema>;
 
 const CreateProjectForm = () => {
   const [image, setImage] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [createProjectLoading, setCreateProjectLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const { pageLoading, setPageLoading } = useLoading.getState();
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(ProjectFormSchema),
@@ -59,48 +63,53 @@ const CreateProjectForm = () => {
   });
 
   const onSubmit = async (values: ProjectFormValues) => {
+    setPageLoading(true);
+
     try {
-      const res = await fetch(`${BASE_URL}/api/projects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      let imageId: number | null = null;
 
-        body: JSON.stringify({ data: values }),
-      });
+      // Upload image if exists
+      if (image) {
+        const formData = new FormData();
+        formData.append("files", image);
 
-      const result = await res.json();
+        const uploadRes = await api.post("/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
-      if (!res.ok) {
-        throw new Error(result?.error?.message || "Failed to create project");
+        imageId = uploadRes.data[0]?.id ?? null;
       }
 
-      router.push("/project-admin");
-      setCreateProjectLoading(true);
+      // Prepare project data
+      const projectData = {
+        ...values,
+        image: imageId,
+      };
 
-      console.log("Project created:", result);
+      // Create project
+      const res = await api.post("/projects", { data: projectData });
+
+      console.log("Project created:", res.data);
+      router.push("/project-admin");
     } catch (error) {
-      console.error(error);
+      // console.error(
+      //   error.response?.data?.error?.message ||
+      //     error.message ||
+      //     "Failed to create project."
+      // );
+      console.log(error, "==error==");
     } finally {
-      setLoading(false);
+      setPageLoading(false);
     }
   };
 
   React.useEffect(() => {
-    setCreateProjectLoading(false);
-  }, [pathname]);
+    setPageLoading(false);
+  }, [pathname, setPageLoading]);
 
   const handleBack = () => {
     router.push("/project-admin");
   };
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
@@ -233,10 +242,12 @@ const CreateProjectForm = () => {
 
               {image && (
                 <div className="mt-4 space-y-2">
-                  <img
+                  <Image
                     src={URL.createObjectURL(image)}
                     alt="Preview"
-                    className="h-40 rounded-lg object-cover"
+                    width={100}
+                    height={100}
+                    className="h-40 w-70 rounded-md object-cover"
                   />
                   <Button
                     type="button"
@@ -244,7 +255,7 @@ const CreateProjectForm = () => {
                     size="sm"
                     onClick={() => {
                       setImage(null);
-                      if (fileInputRef.current) fileInputRef.current.value = ""; // clears file input
+                      if (fileInputRef.current) fileInputRef.current.value = "";
                     }}
                   >
                     Remove Image
@@ -257,15 +268,27 @@ const CreateProjectForm = () => {
               </FormDescription>
               <FormMessage />
             </FormItem>
+
+            {/* active boolean */}
+            <div></div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
+          <div className="flex flex-col sm:flex-row space-x-2 pt-6 border-t">
+            <Button
+              type="button"
+              variant="destructive"
+              className="flex-1 sm:flex-none"
+              onClick={() => form.reset()}
+              // disabled={loadin`g}
+            >
+              Cancel
+            </Button>
             <Button
               type="button"
               variant="outline_admin"
               className="flex-1 sm:flex-none"
               onClick={() => form.reset()}
-              disabled={loading}
+              // disabled={loadin`g}
             >
               Reset Form
             </Button>
@@ -275,14 +298,12 @@ const CreateProjectForm = () => {
               className="group flex items-center gap-2"
               // disabled={loading || !form.formState.isValid}
             >
-              {createProjectLoading ? (
+              {pageLoading ? (
                 <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
               ) : (
                 <Plus className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
               )}
-              <span>
-                {createProjectLoading ? "Loading..." : "Create Project"}
-              </span>
+              <span>{pageLoading ? "Loading..." : "Create Project"}</span>
             </Button>
           </div>
         </form>

@@ -1,72 +1,81 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   RefreshCw,
   AlertCircle,
   FolderOpen,
   MessageCircleMore,
   GraduationCap,
+  BellRing,
 } from "lucide-react";
 import { DashboardStats } from "@/types/dashboard-type";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-const fetchDashboardStats = async (): Promise<DashboardStats> => {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  // Fetch contacts from Strapi
-  const contactsRes = await fetch(`${BASE_URL}/api/contacts`);
-  const contactsData = await contactsRes.json();
-
-  // Fetch projects
-  const projectsRes = await fetch(`${BASE_URL}/api/projects`);
-  const projectsData = await projectsRes.json();
-
-  // Fetch educations
-  const educationsRes = await fetch(`${BASE_URL}/api/educations`);
-  const educationsData = await educationsRes.json();
-
-  return {
-    totalProjects:
-      projectsData?.meta?.pagination?.total ?? projectsData?.data?.length ?? 0,
-    totalContacts:
-      contactsData?.meta?.pagination?.total ?? contactsData?.data?.length ?? 0,
-    totalEducations:
-      educationsData?.meta?.pagination?.total ??
-      educationsData?.data?.length ??
-      0,
-  };
-};
+import api from "@/lib/request";
 
 const Dashboard = () => {
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalProjects: 0,
     totalContacts: 0,
     totalEducations: 0,
+    totalNotifications: 0,
   });
 
   const [statsLoading, setStatsLoading] = useState(true);
   const [statsError, setStatsError] = useState<string | null>(null);
 
-  const loadDashboardStats = async () => {
+  const fetchDashboardStats = async (): Promise<DashboardStats> => {
+    // Fetch contacts
+    const contactsRes = await api.get("/contacts");
+    const contactsData = contactsRes.data;
+
+    // Fetch projects
+    const projectsRes = await api.get("/projects");
+    const projectsData = projectsRes.data;
+
+    // Fetch educations
+    const educationsRes = await api.get("/educations");
+    const educationsData = educationsRes.data;
+
+    // Fetch notifications
+    const notificationRes = await api.get("/notifications");
+    const notificationsData = notificationRes.data;
+
+    return {
+      totalProjects:
+        projectsData?.meta?.pagination?.total ??
+        projectsData?.data?.length ??
+        0,
+      totalContacts:
+        contactsData?.meta?.pagination?.total ??
+        contactsData?.data?.length ??
+        0,
+      totalEducations:
+        educationsData?.meta?.pagination?.total ??
+        educationsData?.data?.length ??
+        0,
+      totalNotifications:
+        notificationsData?.meta?.pagination?.total ??
+        notificationsData?.data?.length ??
+        0,
+    };
+  };
+
+  const loadDashboardStats = useCallback(async () => {
     try {
       setStatsLoading(true);
       setStatsError(null);
       const stats = await fetchDashboardStats();
       setDashboardStats(stats);
-    } catch (err) {
-      setStatsError(
-        err instanceof Error ? err.message : "Failed to load stats"
-      );
+    } catch (error) {
+      console.log(error, "===dashboard state error===");
     } finally {
       setStatsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadDashboardStats();
-  }, []);
+  }, [loadDashboardStats]);
 
   const cardData = [
     {
@@ -101,6 +110,18 @@ const Dashboard = () => {
         ? "Error"
         : dashboardStats.totalEducations?.toString() || "0",
       icon: GraduationCap,
+      color: "bg-purple-500",
+      bgColor: "bg-purple-50",
+      textColor: "text-purple-600",
+    },
+    {
+      title: "Total Notifications",
+      value: statsLoading
+        ? "..."
+        : statsError
+        ? "Error"
+        : dashboardStats.totalNotifications?.toString() || "0",
+      icon: BellRing,
       color: "bg-purple-500",
       bgColor: "bg-purple-50",
       textColor: "text-purple-600",

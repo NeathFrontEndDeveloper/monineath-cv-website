@@ -166,12 +166,6 @@ const ContactForm = ({ className = "" }: ContactFormProps) => {
                     {...field}
                   />
                 </FormControl>
-                <div className="flex justify-between items-center">
-                  <FormMessage />
-                  <span className="text-sm text-gray-400">
-                    {field.value.length}/1000
-                  </span>
-                </div>
               </FormItem>
             )}
           />

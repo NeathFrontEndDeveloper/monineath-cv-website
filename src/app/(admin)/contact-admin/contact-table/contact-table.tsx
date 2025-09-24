@@ -44,8 +44,10 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import type { contactTableType, ContactType } from "@/types/contact-admin-type";
+import type { contactTableType, ContactType } from "@/types/contact-type";
 import { Row } from "@tanstack/react-table";
+import api from "@/lib/request";
+import { useLoading } from "@/store/Loading/use-loading-store";
 
 const ContactTable = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -53,7 +55,9 @@ const ContactTable = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<contactTableType[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
+  const setPageLoading = useLoading.getState().setPageLoading;
+  const pageLoading = useLoading.getState().pageLoading;
 
   const columns: ColumnDef<contactTableType>[] = [
     {
@@ -183,14 +187,11 @@ const ContactTable = () => {
     );
   };
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
   // Fetch contacts
   const fetchContacts = useCallback(async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/contacts`);
-      const json = await res.json();
-      const items = json.data;
+      const res = await api.get("/contacts");
+      const items = res.data.data;
 
       const getContacts: contactTableType[] = items.map(
         (item: ContactType): contactTableType => ({
@@ -207,9 +208,9 @@ const ContactTable = () => {
     } catch (error) {
       console.error("Error fetching contacts:", error);
     } finally {
-      setLoading(false);
+      setPageLoading(false);
     }
-  }, [BASE_URL]);
+  }, [setPageLoading]);
 
   useEffect(() => {
     fetchContacts();
@@ -234,7 +235,7 @@ const ContactTable = () => {
     },
   });
 
-  if (loading) {
+  if (pageLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
