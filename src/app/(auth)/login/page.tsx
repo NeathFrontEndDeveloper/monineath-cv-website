@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import api from "@/lib/request";
 
 const LoginSchema = z.object({
   identifier: z
@@ -39,25 +40,10 @@ const LoginForm = () => {
     },
   });
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
   async function onSubmit(data: LoginFormValues) {
     try {
-      setLoading(true);
+      const { data: result } = await api.post("/auth/local", data);
 
-      const res = await fetch(`${BASE_URL}/api/auth/local`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result?.error?.message || "Login failed");
-      }
-
-      // Save token (example: localStorage)
       document.cookie = `token=${
         result.jwt
       }; path=/; secure; samesite=strict; max-age=${60 * 60 * 24}`;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useLoading } from "@/store/Loading/useLoading";
+import { useLoading } from "@/store/Loading/use-loading-store";
 import { RefreshCw } from "lucide-react";
 
 const LoadingScreen = () => {

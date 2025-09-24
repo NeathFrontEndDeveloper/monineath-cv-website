@@ -2,7 +2,7 @@ export interface ImageFormat {
   url: string;
   width: number;
   height: number;
-  [key: string]: any;
+  key: string;
 }
 
 export interface ImageType {

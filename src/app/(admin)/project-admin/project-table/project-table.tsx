@@ -35,8 +35,6 @@ import {
   Eye,
   Trash,
 } from "lucide-react";
-import axios from "axios";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -57,11 +55,11 @@ import {
 
 import { ProjectAdminType } from "@/types/project-type";
 import { Row } from "@tanstack/react-table";
-import { useLoading } from "@/store/Loading/useLoading";
+import { useLoading } from "@/store/Loading/use-loading-store";
+import LoadingScreen from "@/components/shared/Loading";
 
 const ProjectTable = () => {
   const [projects, setProjects] = useState<ProjectAdminType[]>([]);
-  // const [loading, setLoading] = useState(true);
   const [editProjectLoading, setEditProjectLoading] = useState(false);
   const [createProject, setCreateProject] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -263,13 +261,13 @@ const ProjectTable = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setPageLoading(true);
       const res = await fetch(`${BASE_URL}/api/projects?populate=*`);
       const json = await res.json();
 
-      const getProject = json.data.map((item: any) => {
+      const getProject = json.data.map((item: ProjectAdminType) => {
         const imageUrl = item.image?.url ? `${BASE_URL}${item.image.url}` : "";
 
         return {
@@ -290,11 +288,11 @@ const ProjectTable = () => {
     } finally {
       setPageLoading(false);
     }
-  };
+  }, [BASE_URL, setPageLoading]);
 
   useEffect(() => {
     fetchProjects();
-  }, [BASE_URL]);
+  }, [fetchProjects]);
 
   const handleCreateProject = () => {
     setCreateProject(true);
@@ -307,6 +305,7 @@ const ProjectTable = () => {
 
   return (
     <div className="w-full">
+      <LoadingScreen />
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter title..."

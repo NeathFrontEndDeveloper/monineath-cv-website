@@ -27,7 +27,7 @@ export default function ProjectsPage() {
     };
 
     fetchProjects();
-  }, []);
+  }, [BASE_URL]);
 
   return (
     <div className="min-h-screen w-full">

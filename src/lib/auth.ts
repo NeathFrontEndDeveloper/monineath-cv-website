@@ -1,5 +1,6 @@
+import Cookies from "js-cookie";
+
 export const Logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  window.location.href = "/home";
+  Cookies.remove("token"); // remove auth token cookie
+  window.location.href = "/login"; // redirect to login page
 };

@@ -1,5 +1,3 @@
-// lib/strapi.ts
-
 // Define attributes for an image
 interface StrapiImageAttributes {
   url: string;

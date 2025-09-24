@@ -54,7 +54,7 @@ import {
 import { useRouter } from "next/navigation";
 import type { educationTableType } from "@/types/education-type";
 import { Row } from "@tanstack/react-table";
-import { useLoading } from "@/store/Loading/useLoading";
+import { useLoading } from "@/store/Loading/use-loading-store";
 
 const EducationTable = () => {
   const [data, setData] = useState<educationTableType[]>([]);
@@ -256,7 +256,7 @@ const EducationTable = () => {
     } finally {
       setPageLoading(false);
     }
-  }, [BASE_URL]);
+  }, [BASE_URL, setPageLoading]);
 
   useEffect(() => {
     fetchEducation();

@@ -4,7 +4,6 @@ import Facebook from "@/components/font-awsome-icon/Facebook";
 import Linkedin from "@/components/font-awsome-icon/Linkedin";
 import Email from "@/components/font-awsome-icon/Email";
 import Github from "@/components/font-awsome-icon/Github";
-import type { Education, Certification } from "@/types/education-type";
 
 export const APP_NAME = " SOL MONINEATH";
 
@@ -103,63 +102,6 @@ export const skillsData = [
       { name: "VS Code", level: 95, color: "#007ACC" },
       { name: "Photoshop", level: 70, color: "#31A8FF" },
     ],
-  },
-];
-
-export const education: Education[] = [
-  {
-    id: 1,
-    field: "Graphic Design",
-    institution: "Premier School of Technology",
-    location: "Siem Reap, Cambodia",
-    period: "2023 - 2024",
-    description:
-      "Focused on graphic design principles, creative tools, and visual communication techniques, with hands-on experience in branding and digital media.",
-    achievements: ["Completed over 20 projects designing posters and logos."],
-  },
-  // {
-  //   id: 2,
-  //   field: "Software Engineering",
-  //   institution: "University of California, Berkeley",
-  //   location: "Berkeley, CA",
-  //   period: "2016 - 2020",
-  //   description:
-  //     "Comprehensive program covering software development, algorithms, and system design with emphasis on practical application.",
-  //   achievements: [
-  //     "Summa Cum Laude graduate",
-  //     "Outstanding Student in Computer Science Award",
-  //     "Led university hackathon winning team",
-  //   ],
-  // },
-];
-
-export const certifications: Certification[] = [
-  {
-    id: 1,
-    title: "AWS Certified Solutions Architect",
-    issuer: "Amazon Web Services",
-    date: "2023",
-    credential_id: "AWS-SA-2023-001234",
-    description:
-      "Professional-level certification demonstrating expertise in designing distributed systems on AWS.",
-  },
-  {
-    id: 2,
-    title: "Google Cloud Professional Developer",
-    issuer: "Google Cloud",
-    date: "2022",
-    credential_id: "GCP-PD-2022-005678",
-    description:
-      "Validates ability to build, test, and deploy applications on Google Cloud Platform.",
-  },
-  {
-    id: 3,
-    title: "Certified Kubernetes Administrator",
-    issuer: "Cloud Native Computing Foundation",
-    date: "2022",
-    credential_id: "CKA-2022-009876",
-    description:
-      "Demonstrates skills in Kubernetes cluster administration and management.",
   },
 ];
 

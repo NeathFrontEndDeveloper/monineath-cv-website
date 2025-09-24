@@ -4,7 +4,6 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,7 +19,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { RefreshCw, Plus, MoveLeft } from "lucide-react";
-import { useLoading } from "@/store/Loading/useLoading";
+import { useLoading } from "@/store/Loading/use-loading-store";
+import api from "@/lib/request";
+import Image from "next/image";
 
 const ProjectFormSchema = z.object({
   title: z
@@ -49,10 +50,7 @@ const CreateProjectForm = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-  const { pageLoading } = useLoading();
-  const setPageLoading = useLoading.getState().setPageLoading;
-
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const { pageLoading, setPageLoading } = useLoading.getState();
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(ProjectFormSchema),
@@ -68,48 +66,38 @@ const CreateProjectForm = () => {
     setPageLoading(true);
 
     try {
-      let imageId = null;
+      let imageId: number | null = null;
+
+      // Upload image if exists
       if (image) {
         const formData = new FormData();
         formData.append("files", image);
 
-        const uploadRes = await fetch(`${BASE_URL}/api/upload`, {
-          method: "POST",
-          body: formData,
+        const uploadRes = await api.post("/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
         });
 
-        if (!uploadRes.ok) {
-          const error = await uploadRes.json();
-          throw new Error(error?.error?.message || "Failed to upload image.");
-        }
-
-        const uploadResult = await uploadRes.json();
-        imageId = uploadResult[0].id;
+        imageId = uploadRes.data[0]?.id ?? null;
       }
 
+      // Prepare project data
       const projectData = {
         ...values,
         image: imageId,
       };
 
-      const res = await fetch(`${BASE_URL}/api/projects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ data: projectData }),
-      });
+      // Create project
+      const res = await api.post("/projects", { data: projectData });
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error?.error?.message || "Failed to create project.");
-      }
-
-      const result = await res.json();
-      console.log("Project created:", result);
+      console.log("Project created:", res.data);
       router.push("/project-admin");
     } catch (error) {
-      console.error(error);
+      // console.error(
+      //   error.response?.data?.error?.message ||
+      //     error.message ||
+      //     "Failed to create project."
+      // );
+      console.log(error, "==error==");
     } finally {
       setPageLoading(false);
     }
@@ -117,7 +105,7 @@ const CreateProjectForm = () => {
 
   React.useEffect(() => {
     setPageLoading(false);
-  }, [pathname]);
+  }, [pathname, setPageLoading]);
 
   const handleBack = () => {
     router.push("/project-admin");
@@ -254,10 +242,12 @@ const CreateProjectForm = () => {
 
               {image && (
                 <div className="mt-4 space-y-2">
-                  <img
+                  <Image
                     src={URL.createObjectURL(image)}
                     alt="Preview"
-                    className="h-40 rounded-lg object-cover"
+                    width={100}
+                    height={100}
+                    className="h-40 w-70 rounded-md object-cover"
                   />
                   <Button
                     type="button"
@@ -265,7 +255,7 @@ const CreateProjectForm = () => {
                     size="sm"
                     onClick={() => {
                       setImage(null);
-                      if (fileInputRef.current) fileInputRef.current.value = ""; // clears file input
+                      if (fileInputRef.current) fileInputRef.current.value = "";
                     }}
                   >
                     Remove Image
@@ -283,7 +273,16 @@ const CreateProjectForm = () => {
             <div></div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
+          <div className="flex flex-col sm:flex-row space-x-2 pt-6 border-t">
+            <Button
+              type="button"
+              variant="destructive"
+              className="flex-1 sm:flex-none"
+              onClick={() => form.reset()}
+              // disabled={loadin`g}
+            >
+              Cancel
+            </Button>
             <Button
               type="button"
               variant="outline_admin"

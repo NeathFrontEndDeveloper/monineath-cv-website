@@ -40,7 +40,8 @@ export const useAuth = create<AuthState>((set) => ({
       localStorage.setItem("authToken", data.jwt);
     } catch (err) {
       // Handle errors
-      set({ isLoading: false, error: err.message });
+      // set({ isLoading: false, error: err.message });
+      console.log(err, "===response error===");
     }
   },
 
