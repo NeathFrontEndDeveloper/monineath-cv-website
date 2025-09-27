@@ -54,7 +54,7 @@ import {
 import { useRouter } from "next/navigation";
 import type { educationTableType } from "@/types/education-type";
 import { Row } from "@tanstack/react-table";
-import { useLoading } from "@/store/Loading/use-loading-store";
+import { useLoading } from "@/store/Loading/useLoading";
 
 const EducationTable = () => {
   const [data, setData] = useState<educationTableType[]>([]);

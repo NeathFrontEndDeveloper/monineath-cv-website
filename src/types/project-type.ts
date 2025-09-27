@@ -32,3 +32,12 @@ export interface ProjectAdminType {
   image: ImageType | null;
   createdAt: string;
 }
+
+export interface ProjectCreateInput {
+  title?: string;
+  description?: string;
+  features?: string;
+  techStack?: string;
+  active?: boolean;
+  image?: number | null;
+}

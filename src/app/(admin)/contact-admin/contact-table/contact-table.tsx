@@ -47,7 +47,7 @@ import { useRouter } from "next/navigation";
 import type { contactTableType, ContactType } from "@/types/contact-type";
 import { Row } from "@tanstack/react-table";
 import api from "@/lib/request";
-import { useLoading } from "@/store/Loading/use-loading-store";
+import { useLoading } from "@/store/Loading/useLoading";
 
 const ContactTable = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
