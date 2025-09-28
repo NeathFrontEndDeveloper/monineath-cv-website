@@ -39,7 +39,7 @@ const CreateProjectForm = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-  const { bteLoading, setBtnLoading } = useLoading.getState();
+  const { btnLoading, setBtnLoading } = useLoading.getState();
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(ProjectFormSchema),
@@ -188,7 +188,6 @@ const CreateProjectForm = () => {
             />
 
             {/* active boolean */}
-
             <FormField
               control={form.control}
               name="active"
@@ -217,11 +216,11 @@ const CreateProjectForm = () => {
                           >
                             {field.value ? "Completed" : "In Development"}
                           </span>
-                          {/* <span className="text-xs text-gray-700">
+                          <span className="text-xs text-gray-700">
                             {field.value
-                              ? "Project has been completed and is ready for deployment"
-                              : "Project is currently being developed"}
-                          </span> */}
+                              ? "Project has been completed"
+                              : "Project is in development"}
+                          </span>
                         </div>
                       </div>
 
@@ -305,12 +304,12 @@ const CreateProjectForm = () => {
               variant="primary_admin"
               className="group flex items-center gap-2"
             >
-              {bteLoading ? (
+              {btnLoading ? (
                 <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
               ) : (
                 <Plus className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
               )}
-              <span>{bteLoading ? "Loading..." : "Create Project"}</span>
+              <span>{btnLoading ? "Loading..." : "Create Project"}</span>
             </Button>
           </div>
         </form>

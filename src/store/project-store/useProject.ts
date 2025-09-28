@@ -1,4 +1,3 @@
-// project.store.ts
 import { create } from "zustand";
 import { ProjectAdminType } from "@/types/project-type";
 import { getProjects } from "@/lib/api/project-api";

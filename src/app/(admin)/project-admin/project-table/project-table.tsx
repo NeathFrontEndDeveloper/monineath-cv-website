@@ -41,7 +41,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import LoadingScreen from "@/components/shared/Loading";
 import { ProjectAdminType } from "@/types/project-type";
 import { ActionCell } from "@/app/(admin)/project-admin/components/core/table-action-cell";
 import { useLoading } from "@/store/Loading/useLoading";
@@ -55,6 +54,7 @@ const ProjectTable = () => {
 
   const { projects, fetchProjects } = useProjects();
   const { btnLoading, setBtnLoading } = useLoading();
+  const pageLoading = useLoading.getState().pageLoading;
   const router = useRouter();
   const pathname = usePathname();
 
@@ -174,9 +174,16 @@ const ProjectTable = () => {
     setBtnLoading(false);
   }, [pathname]);
 
+  if (pageLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
-      <LoadingScreen />
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter title..."
