@@ -18,6 +18,7 @@ const ProjectDetailPage = () => {
   const [error, setError] = useState<string | null>(null);
   const { pageLoading, setPageLoading } = useLoading.getState();
   const router = useRouter();
+
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL!;
 
   const loadProjectDetail = useCallback(async () => {
@@ -28,8 +29,9 @@ const ProjectDetailPage = () => {
       } else {
         setError("No data found.");
       }
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch project");
+    } catch (err) {
+      // setError(err.message || "Failed to fetch project");
+      console.log(err, "<<< error");
     } finally {
       setPageLoading(false);
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -15,15 +15,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import {
-  ChevronDown,
-  RefreshCw,
-  MoveRight,
-  Plus,
-  SquarePen,
-  Eye,
-  Trash,
-} from "lucide-react";
+import { ChevronDown, RefreshCw, MoveRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -172,7 +164,7 @@ const ProjectTable = () => {
 
   useEffect(() => {
     setBtnLoading(false);
-  }, [pathname]);
+  }, [pathname, setBtnLoading]);
 
   if (pageLoading) {
     return (

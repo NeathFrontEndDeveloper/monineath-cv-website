@@ -22,8 +22,9 @@ export const useProjects = create<ProjectState>((set) => ({
 
       const data = await getProjects();
       set({ projects: data });
-    } catch (err: any) {
-      set({ error: "Failed to fetch projects" });
+    } catch (err) {
+      console.log(err);
+      // set({ error: "Failed to fetch projects" });
       console.error("Error fetching projects:", err);
     } finally {
       setPageLoading(false);

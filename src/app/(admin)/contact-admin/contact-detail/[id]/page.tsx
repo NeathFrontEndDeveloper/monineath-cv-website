@@ -35,7 +35,7 @@ export default function ContactDetailPage() {
     };
 
     loadContact();
-  }, [id]);
+  }, [id, setPageLoading]);
 
   if (pageLoading) {
     return (

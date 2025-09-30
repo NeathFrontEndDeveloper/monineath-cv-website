@@ -13,7 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ChevronDown, RefreshCw, MoveRight, Trash, Eye } from "lucide-react";
+import { ChevronDown, RefreshCw, MoveRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -236,7 +236,6 @@ const ContactTable = () => {
             size="sm"
             onClick={() => table.previousPage()}
             className="py-5 px-4"
-            // disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
@@ -245,7 +244,6 @@ const ContactTable = () => {
             size="sm"
             onClick={() => table.nextPage()}
             className="group flex items-center gap-2 py-5 px-4"
-            // disabled={!table.getCanNextPage()}
           >
             Next
             <MoveRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

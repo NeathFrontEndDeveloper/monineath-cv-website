@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RefreshCw, Plus, MoveLeft } from "lucide-react";
 import { useLoading } from "@/store/Loading/useLoading";
 import { createProject } from "@/lib/api/project-api";
-import { Switch } from "@/components/ui/switch";
+// import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 
 const ProjectFormSchema = z.object({
@@ -29,7 +29,7 @@ const ProjectFormSchema = z.object({
   description: z.string().optional(),
   features: z.string().optional(),
   techStack: z.string().optional(),
-  active: z.boolean().default(false),
+  // active: z.boolean().default(false),
 });
 
 type ProjectFormValues = z.infer<typeof ProjectFormSchema>;
@@ -48,7 +48,7 @@ const CreateProjectForm = () => {
       description: "",
       features: "",
       techStack: "",
-      active: false,
+      // active: false,
     },
   });
 
@@ -188,7 +188,7 @@ const CreateProjectForm = () => {
             />
 
             {/* active boolean */}
-            <FormField
+            {/* <FormField
               control={form.control}
               name="active"
               render={({ field }) => (
@@ -237,7 +237,7 @@ const CreateProjectForm = () => {
                   </FormDescription>
                 </FormItem>
               )}
-            />
+            /> */}
 
             <FormItem className="md:col-span-2">
               <FormLabel className="text-sm font-semibold text-gray-900">
