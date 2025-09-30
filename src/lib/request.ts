@@ -22,7 +22,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Create a rewponse interceptor
+// Create a response interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -15,26 +15,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-import {
-  ChevronDown,
-  RefreshCw,
-  MoveRight,
-  Plus,
-  SquarePen,
-  Eye,
-  Trash,
-} from "lucide-react";
+import { ChevronDown, RefreshCw, MoveRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -52,23 +33,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { ProjectAdminType } from "@/types/project-type";
-import { Row } from "@tanstack/react-table";
-import { useLoading } from "@/store/Loading/use-loading-store";
-import LoadingScreen from "@/components/shared/Loading";
-import api from "@/lib/request";
+import { ActionCell } from "@/app/(admin)/project-admin/components/core/table-action-cell";
+import { useLoading } from "@/store/Loading/useLoading";
+import { useProjects } from "@/store/project-store/useProject";
 
 const ProjectTable = () => {
-  const [projects, setProjects] = useState<ProjectAdminType[]>([]);
-  const [editProjectLoading, setEditProjectLoading] = useState(false);
-  const [createProject, setCreateProject] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
 
-  const setPageLoading = useLoading.getState().setPageLoading;
+  const { projects, fetchProjects } = useProjects();
+  const { btnLoading, setBtnLoading } = useLoading();
+  const pageLoading = useLoading.getState().pageLoading;
+  const router = useRouter();
+  const pathname = usePathname();
 
   const columns: ColumnDef<ProjectAdminType>[] = [
     {
@@ -154,91 +134,6 @@ const ProjectTable = () => {
     },
   ];
 
-  const ActionCell = ({
-    row,
-    fetchProjects,
-  }: {
-    row: Row<ProjectAdminType>;
-    fetchProjects: () => void;
-  }) => {
-    const router = useRouter();
-    const project = row.original;
-    const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-    const handleView = () => {
-      router.push(`/project-admin/project-detial/${project.documentId}`);
-    };
-
-    const handleEdit = () => {
-      setEditProjectLoading(true);
-      router.push(`/project-admin/edit-project/${project.id}`);
-    };
-
-    const handleDelete = async () => {
-      try {
-        const res = await fetch(
-          `${BASE_URL}/api/projects/${project.documentId}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        if (!res.ok) throw new Error("Failed to delete education");
-
-        console.log("Deleted Project:", project.documentId);
-
-        // Refetch to update table
-        fetchProjects();
-      } catch (error) {
-        console.error("Error deleting:", error);
-      }
-    };
-
-    return (
-      <div className="flex gap-2">
-        <Button variant="outline_admin" size="sm" onClick={handleView}>
-          <Eye className="h-4 w-4" />
-          View
-        </Button>
-        <Button variant="ghost_admin" size="sm" onClick={handleEdit}>
-          {editProjectLoading ? (
-            <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
-          ) : (
-            <SquarePen className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
-          )}
-          <span>{editProjectLoading ? "Loading" : "Edit"}</span>
-        </Button>
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="sm" className="cursor-pointer">
-              <Trash className="h-4 w-4" />
-              Delete
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. It will permanently delete this
-                education record.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDelete}
-                className="cursor-pointer"
-              >
-                Yes, delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    );
-  };
-
   const table = useReactTable({
     data: projects,
     columns,
@@ -258,55 +153,29 @@ const ProjectTable = () => {
     },
   });
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const fetchProjects = useCallback(async () => {
-    try {
-      setPageLoading(true);
-      const res = await api.get("/projects?populate=*");
-      const json = await res.data;
-
-      const getProject = json.data.map((item: ProjectAdminType) => {
-        const imageUrl = item.image?.url ? `${BASE_URL}${item.image.url}` : "";
-
-        return {
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          features: item.features,
-          techStack: item.techStack,
-          image: imageUrl,
-          documentId: item.documentId,
-        };
-      });
-
-      setProjects(getProject);
-      console.log(getProject, "===projects===");
-    } catch (err) {
-      console.error("Error fetching projects:", err);
-    } finally {
-      setPageLoading(false);
-    }
-  }, [BASE_URL, setPageLoading]);
-
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
 
   const handleCreateProject = () => {
-    setCreateProject(true);
+    setBtnLoading(true);
     router.push("/project-admin/create-project");
   };
 
   useEffect(() => {
-    setCreateProject(false);
-  }, [pathname]);
+    setBtnLoading(false);
+  }, [pathname, setBtnLoading]);
+
+  if (pageLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
-      <LoadingScreen />
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter title..."
@@ -323,14 +192,14 @@ const ProjectTable = () => {
                 variant="outline_admin"
                 className="group flex items-center gap-2"
                 onClick={handleCreateProject}
-                disabled={createProject}
+                disabled={btnLoading}
               >
-                {createProject ? (
+                {btnLoading ? (
                   <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
                 ) : (
                   <Plus className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
                 )}
-                <span>{createProject ? "Loading..." : "Create Project"}</span>
+                <span>{btnLoading ? "Loading..." : "Create Project"}</span>
               </Button>
             </div>
 
@@ -421,7 +290,6 @@ const ProjectTable = () => {
             size="sm"
             onClick={() => table.previousPage()}
             className="py-5 px-4"
-            // disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
@@ -430,7 +298,6 @@ const ProjectTable = () => {
             size="sm"
             onClick={() => table.nextPage()}
             className="group flex items-center gap-2 py-5 px-4"
-            // disabled={!table.getCanNextPage()}
           >
             Next
             <MoveRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

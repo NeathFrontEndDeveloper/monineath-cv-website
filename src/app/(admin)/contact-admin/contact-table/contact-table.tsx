@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,7 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ChevronDown, RefreshCw, MoveRight, Trash, Eye } from "lucide-react";
+import { ChevronDown, RefreshCw, MoveRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -32,31 +32,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-import { useRouter } from "next/navigation";
-import type { contactTableType, ContactType } from "@/types/contact-type";
-import { Row } from "@tanstack/react-table";
-import api from "@/lib/request";
-import { useLoading } from "@/store/Loading/use-loading-store";
+import { contactTableType } from "@/types/contact-type";
+import { useLoading } from "@/store/Loading/useLoading";
+import { useContacts } from "@/store/contact-store/useContact";
+import { ActionCell } from "@/app/(admin)/contact-admin/components/core/table-action-cell";
 
 const ContactTable = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState<contactTableType[]>([]);
-  // const [loading, setLoading] = useState(true);
-  const setPageLoading = useLoading.getState().setPageLoading;
+  const { contacts, fetchContacts } = useContacts();
   const pageLoading = useLoading.getState().pageLoading;
 
   const columns: ColumnDef<contactTableType>[] = [
@@ -115,109 +101,12 @@ const ContactTable = () => {
     },
   ];
 
-  const ActionCell = ({
-    row,
-    fetchContacts,
-  }: {
-    row: Row<contactTableType>;
-    fetchContacts: () => void;
-  }) => {
-    const router = useRouter();
-    const contact = row.original;
-    const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-    const handleView = () => {
-      router.push(`/contact-admin/contact-detail/${contact.documentId}`);
-    };
-
-    const handleDelete = async () => {
-      try {
-        const res = await fetch(
-          `${BASE_URL}/api/contacts/${contact.documentId}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        if (!res.ok) throw new Error("Failed to delete contact");
-
-        console.log("Deleted Contact:", contact.documentId);
-
-        // Refetch to update table
-        fetchContacts();
-      } catch (error) {
-        console.error("Error deleting:", error);
-      }
-    };
-
-    return (
-      <div className="flex gap-2">
-        <Button variant="outline_admin" size="sm" onClick={handleView}>
-          <Eye className="h-4 w-4" />
-          View
-        </Button>
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="sm" className="cursor-pointer">
-              <Trash className="h-4 w-4" />
-              Delete
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. It will permanently delete this
-                contact record.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDelete}
-                className="cursor-pointer"
-              >
-                Yes, delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    );
-  };
-
-  // Fetch contacts
-  const fetchContacts = useCallback(async () => {
-    try {
-      const res = await api.get("/contacts");
-      const items = res.data.data;
-
-      const getContacts: contactTableType[] = items.map(
-        (item: ContactType): contactTableType => ({
-          id: String(item.id),
-          documentId: item.documentId,
-          fullName: item.fullName,
-          email: item.email,
-          message: item.message,
-        })
-      );
-
-      setData(getContacts);
-      console.log(getContacts, "===contacts===");
-    } catch (error) {
-      console.error("Error fetching contacts:", error);
-    } finally {
-      setPageLoading(false);
-    }
-  }, [setPageLoading]);
-
   useEffect(() => {
     fetchContacts();
   }, [fetchContacts]);
 
   const table = useReactTable({
-    data,
+    data: contacts,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -347,7 +236,6 @@ const ContactTable = () => {
             size="sm"
             onClick={() => table.previousPage()}
             className="py-5 px-4"
-            // disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
@@ -356,7 +244,6 @@ const ContactTable = () => {
             size="sm"
             onClick={() => table.nextPage()}
             className="group flex items-center gap-2 py-5 px-4"
-            // disabled={!table.getCanNextPage()}
           >
             Next
             <MoveRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

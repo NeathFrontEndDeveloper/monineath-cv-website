@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,28 +19,17 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { RefreshCw, Plus, MoveLeft } from "lucide-react";
-import { useLoading } from "@/store/Loading/use-loading-store";
-import api from "@/lib/request";
+import { useLoading } from "@/store/Loading/useLoading";
+import { createProject } from "@/lib/api/project-api";
+// import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 
 const ProjectFormSchema = z.object({
-  title: z
-    .string()
-    // .nonempty({ message: "This field can't be empty" })
-    .optional(),
-  description: z
-    .string()
-    // .nonempty({ message: "This field can't be empty" })
-    .optional(),
-
-  features: z
-    .string()
-    // .nonempty({ message: "This field can't be empty" })
-    .optional(),
-  techStack: z
-    .string()
-    // .nonempty({ message: "This field can't be empty" })
-    .optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  features: z.string().optional(),
+  techStack: z.string().optional(),
+  // active: z.boolean().default(false),
 });
 
 type ProjectFormValues = z.infer<typeof ProjectFormSchema>;
@@ -50,7 +39,7 @@ const CreateProjectForm = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-  const { pageLoading, setPageLoading } = useLoading.getState();
+  const { btnLoading, setBtnLoading } = useLoading.getState();
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(ProjectFormSchema),
@@ -59,57 +48,28 @@ const CreateProjectForm = () => {
       description: "",
       features: "",
       techStack: "",
+      // active: false,
     },
   });
 
   const onSubmit = async (values: ProjectFormValues) => {
-    setPageLoading(true);
+    setBtnLoading(true);
 
     try {
-      let imageId: number | null = null;
+      const newProject = await createProject(values, image);
+      console.log("Project created:", newProject);
 
-      // Upload image if exists
-      if (image) {
-        const formData = new FormData();
-        formData.append("files", image);
-
-        const uploadRes = await api.post("/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        imageId = uploadRes.data[0]?.id ?? null;
-      }
-
-      // Prepare project data
-      const projectData = {
-        ...values,
-        image: imageId,
-      };
-
-      // Create project
-      const res = await api.post("/projects", { data: projectData });
-
-      console.log("Project created:", res.data);
       router.push("/project-admin");
     } catch (error) {
-      // console.error(
-      //   error.response?.data?.error?.message ||
-      //     error.message ||
-      //     "Failed to create project."
-      // );
-      console.log(error, "==error==");
+      console.error(error, "==error==");
     } finally {
-      setPageLoading(false);
+      setBtnLoading(false);
     }
   };
 
-  React.useEffect(() => {
-    setPageLoading(false);
-  }, [pathname, setPageLoading]);
-
-  const handleBack = () => {
-    router.push("/project-admin");
-  };
+  useEffect(() => {
+    setBtnLoading(false);
+  }, [pathname, setBtnLoading]);
 
   return (
     <>
@@ -118,7 +78,7 @@ const CreateProjectForm = () => {
           <div className="space-y-4">
             <Button
               variant="secondary_admin"
-              onClick={handleBack}
+              onClick={() => router.back()}
               className="group flex items-center gap-2"
             >
               <MoveLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
@@ -227,6 +187,58 @@ const CreateProjectForm = () => {
               )}
             />
 
+            {/* active boolean */}
+            {/* <FormField
+              control={form.control}
+              name="active"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel className="text-sm font-semibold text-gray-900 tracking-tight">
+                    Project Status
+                  </FormLabel>
+
+                  <FormControl>
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-400"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <span
+                            className={`text-sm font-semibold transition-colors duration-200 ${
+                              field.value ? "text-blue-600" : "text-red-600"
+                            }`}
+                          >
+                            {field.value ? "Completed" : "In Development"}
+                          </span>
+                          <span className="text-xs text-gray-700">
+                            {field.value
+                              ? "Project has been completed"
+                              : "Project is in development"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div
+                        className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+                          field.value ? "bg-blue-600" : "bg-red-600"
+                        }`}
+                      />
+                    </div>
+                  </FormControl>
+
+                  <FormDescription className="text-xs text-gray-600 ml-1">
+                    Toggle to mark project as completed or in development
+                  </FormDescription>
+                </FormItem>
+              )}
+            /> */}
+
             <FormItem className="md:col-span-2">
               <FormLabel className="text-sm font-semibold text-gray-900">
                 Project Image
@@ -268,9 +280,6 @@ const CreateProjectForm = () => {
               </FormDescription>
               <FormMessage />
             </FormItem>
-
-            {/* active boolean */}
-            <div></div>
           </div>
 
           <div className="flex flex-col sm:flex-row space-x-2 pt-6 border-t">
@@ -278,8 +287,7 @@ const CreateProjectForm = () => {
               type="button"
               variant="destructive"
               className="flex-1 sm:flex-none"
-              onClick={() => form.reset()}
-              // disabled={loadin`g}
+              onClick={() => router.back()}
             >
               Cancel
             </Button>
@@ -288,7 +296,6 @@ const CreateProjectForm = () => {
               variant="outline_admin"
               className="flex-1 sm:flex-none"
               onClick={() => form.reset()}
-              // disabled={loadin`g}
             >
               Reset Form
             </Button>
@@ -296,14 +303,13 @@ const CreateProjectForm = () => {
               type="submit"
               variant="primary_admin"
               className="group flex items-center gap-2"
-              // disabled={loading || !form.formState.isValid}
             >
-              {pageLoading ? (
+              {btnLoading ? (
                 <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
               ) : (
                 <Plus className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
               )}
-              <span>{pageLoading ? "Loading..." : "Create Project"}</span>
+              <span>{btnLoading ? "Loading..." : "Create Project"}</span>
             </Button>
           </div>
         </form>

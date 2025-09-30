@@ -19,6 +19,8 @@ export const ProjectForm = ({ project }: { project: ProjectAdminType }) => (
     <FormField label="Key Features" value={project.features} type="textarea" />
     {/* Tech Stack */}
     <FormField label="Tech Stack" value={project.techStack} />
+    {/* Status */}
+    {/* <FormField label="Project Status" value={project.active} /> */}
     {/* Created At */}
     <FormField
       label="Created At"

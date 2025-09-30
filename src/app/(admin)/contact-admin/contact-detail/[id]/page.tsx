@@ -6,52 +6,38 @@ import { RefreshCw, MoveLeft } from "lucide-react";
 import { ContactType } from "@/types/contact-type";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { fetchContactById } from "@/lib/api/contact-api";
+import { useLoading } from "@/store/Loading/useLoading";
 
 export default function ContactDetailPage() {
   const { id } = useParams();
   const [contact, setContact] = useState<ContactType | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { pageLoading, setPageLoading } = useLoading.getState();
   const router = useRouter();
 
-  const handleBack = () => {
-    // setLoading(true);
-    router.push("/contact-admin");
-  };
-
   useEffect(() => {
-    const fetchContact = async () => {
+    const loadContact = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/contacts?filters[documentId][$eq]=${id}`
-        );
-        const json = await res.json();
+        if (!id) return;
 
-        const found = json.data[0];
+        const found = await fetchContactById(String(id));
         if (found) {
-          setContact({
-            id: found.id,
-            documentId: found.documentId,
-            fullName: found.fullName,
-            email: found.email,
-            message: found.message,
-            createdAt: found.createdAt,
-          });
+          setContact(found);
         } else {
           setError("No contact found");
         }
-      } catch (err) {
+      } catch {
         setError("Failed to fetch contact");
-        console.log(err);
       } finally {
-        setLoading(false);
+        setPageLoading(false);
       }
     };
 
-    if (id) fetchContact();
-  }, [id]);
+    loadContact();
+  }, [id, setPageLoading]);
 
-  if (loading) {
+  if (pageLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
@@ -63,7 +49,9 @@ export default function ContactDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">😞</div>
+          <div className="mb-4">
+            <h1 className="text-6xl ">Something went wrong.</h1>
+          </div>
           <p className="text-gray-400 text-xl">
             {error || "No contact found."}
           </p>
@@ -79,7 +67,7 @@ export default function ContactDetailPage() {
         <div className="space-y-4">
           <Button
             variant="secondary_admin"
-            onClick={handleBack}
+            onClick={() => router.back()}
             className="group flex items-center gap-2"
           >
             <MoveLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
@@ -134,7 +122,7 @@ export default function ContactDetailPage() {
         {/* Created At */}
         <div>
           <label className="block text-gray-900 text-sm font-medium mb-2">
-            Created At
+            Contact Date
           </label>
           <input
             type="text"
