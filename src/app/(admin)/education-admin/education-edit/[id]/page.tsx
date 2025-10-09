@@ -1,76 +1,67 @@
 "use client";
 
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { educationType } from "@/types/education-type";
+import { fetchEducationById, updateEducation } from "@/lib/api/education-api";
 import { RefreshCw, MoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const UpdateEduForm = () => {
+const EditEduPage = () => {
   const { id } = useParams();
+  const router = useRouter();
+
   const [formData, setFormData] = useState<educationType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-  const router = useRouter();
-
-  const handleBack = () => router.push("/education-admin");
-
+  // Fetch education details
   useEffect(() => {
-    const fetchEducation = async () => {
+    const loadEducation = async () => {
       if (!id) return;
-
       try {
-        const res = await axios.get(`${BASE_URL}/api/educations/${id}`);
-        const found = res.data.data;
-
-        if (found) {
-          setFormData({
-            id: found.id,
-            documentId: found.attributes.documentId,
-            insitituion: found.attributes.insitituion,
-            course: found.attributes.course,
-            description: found.attributes.description,
-            date: found.attributes.date,
-            location: found.attributes.location,
-            createdAt: found.attributes.createdAt,
-          });
+        setLoading(true);
+        const data = await fetchEducationById(id as string);
+        if (data) {
+          setFormData(data);
+          setError(null);
         } else {
           setError("No data found.");
         }
       } catch (err) {
-        console.error("Error fetching education:", err);
-        setError("Failed to fetch education.");
+        console.log(err);
+        setError("Failed to load education.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchEducation();
-  }, [id, BASE_URL]);
+    loadEducation();
+  }, [id]);
 
+  // Handle form input
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     if (!formData) return;
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
+  // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
 
-    setSubmitting(true);
     try {
-      await axios.put(`${BASE_URL}/api/educations/${formData.id}`, {
-        data: formData,
-      });
+      setSubmitting(true);
+      await updateEducation(id as string, formData);
       router.push("/education-admin");
     } catch (err) {
-      console.error("Update failed:", err);
+      console.error(err);
       setError("Failed to update education.");
     } finally {
       setSubmitting(false);
@@ -104,7 +95,7 @@ const UpdateEduForm = () => {
           <Button
             type="button"
             variant="secondary_admin"
-            onClick={handleBack}
+            onClick={() => router.back()}
             className="group flex items-center gap-2"
           >
             <MoveLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
@@ -119,16 +110,13 @@ const UpdateEduForm = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Institution */}
         <div className="space-y-2">
-          <label
-            htmlFor="insitituion"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Institution
           </label>
           <input
-            id="insitituion"
+            name="institution"
             type="text"
-            value={formData.insitituion}
+            value={formData.institution}
             onChange={handleChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg"
           />
@@ -136,14 +124,11 @@ const UpdateEduForm = () => {
 
         {/* Course */}
         <div className="space-y-2">
-          <label
-            htmlFor="course"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Course
           </label>
           <input
-            id="course"
+            name="course"
             type="text"
             value={formData.course}
             onChange={handleChange}
@@ -153,14 +138,11 @@ const UpdateEduForm = () => {
 
         {/* Description */}
         <div className="space-y-2 lg:col-span-2">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Description
           </label>
           <textarea
-            id="description"
+            name="description"
             value={formData.description}
             onChange={handleChange}
             rows={4}
@@ -170,14 +152,11 @@ const UpdateEduForm = () => {
 
         {/* Date */}
         <div className="space-y-2">
-          <label
-            htmlFor="date"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Date
           </label>
           <input
-            id="date"
+            name="date"
             type="text"
             value={formData.date}
             onChange={handleChange}
@@ -187,14 +166,11 @@ const UpdateEduForm = () => {
 
         {/* Location */}
         <div className="space-y-2">
-          <label
-            htmlFor="location"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Location
           </label>
           <input
-            id="location"
+            name="location"
             type="text"
             value={formData.location}
             onChange={handleChange}
@@ -208,7 +184,7 @@ const UpdateEduForm = () => {
         <Button type="submit" disabled={submitting}>
           {submitting ? "Updating..." : "Save Changes"}
         </Button>
-        <Button type="button" variant="secondary" onClick={handleBack}>
+        <Button type="button" variant="secondary" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>
@@ -216,4 +192,4 @@ const UpdateEduForm = () => {
   );
 };
 
-export default UpdateEduForm;
+export default EditEduPage;

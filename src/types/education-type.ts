@@ -1,21 +1,10 @@
-export interface educationTableType {
-  id: string;
-  documentId: string;
-  createdAt: string;
-  insitituion: string;
-  course: string;
-  description: string;
-  date: string;
-  location: string;
-}
-
-export interface educationType {
+export type educationType = {
   id: number;
   documentId: string;
-  createdAt: string;
-  insitituion: string;
+  institution: string;
   course: string;
   description: string;
   date: string;
   location: string;
-}
+  createdAt: string;
+};

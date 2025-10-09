@@ -4,6 +4,7 @@ import { Maximize2, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { StrapiImage } from "@/types/strapi";
 import { ProjectImageModal } from "@/app/(admin)/project-admin/components/modal/project-image-modal";
+import { useLoading } from "@/store/Loading/useLoading";
 
 export const ProjectImage = ({
   title,
@@ -15,7 +16,7 @@ export const ProjectImage = ({
   BASE_URL: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { pageLoading, setPageLoading } = useLoading.getState();
 
   if (!image) {
     return (
@@ -44,8 +45,8 @@ export const ProjectImage = ({
             width={400}
             height={300}
             className="rounded-lg border border-gray-200 transition-all hover:border-blue-300 shadow-sm"
-            onLoadStart={() => setLoading(true)}
-            onLoad={() => setLoading(false)}
+            onLoadStart={() => setPageLoading(true)}
+            onLoad={() => setPageLoading(false)}
           />
 
           {/* Hover overlay */}
@@ -57,7 +58,8 @@ export const ProjectImage = ({
           </div>
         </button>
 
-        {loading && (
+        {/* Show global loading spinner */}
+        {pageLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
             <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
           </div>
