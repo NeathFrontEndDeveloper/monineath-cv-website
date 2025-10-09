@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RefreshCw, Plus, MoveLeft } from "lucide-react";
 import { useLoading } from "@/store/Loading/useLoading";
 import { createProject } from "@/lib/api/project-api";
-// import { Switch } from "@/components/ui/switch";
+// import ActiveStatusSwitch from "@/app/(admin)/project-admin/components/core/ActiveStatusButton";
 import Image from "next/image";
 
 const ProjectFormSchema = z.object({
@@ -48,7 +48,6 @@ const CreateProjectForm = () => {
       description: "",
       features: "",
       techStack: "",
-      // active: false,
     },
   });
 
@@ -188,56 +187,11 @@ const CreateProjectForm = () => {
             />
 
             {/* active boolean */}
-            {/* <FormField
-              control={form.control}
-              name="active"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel className="text-sm font-semibold text-gray-900 tracking-tight">
-                    Project Status
-                  </FormLabel>
-
-                  <FormControl>
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors duration-200">
-                      <div className="flex items-center gap-4">
-                        <div className="relative">
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-400"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                          <span
-                            className={`text-sm font-semibold transition-colors duration-200 ${
-                              field.value ? "text-blue-600" : "text-red-600"
-                            }`}
-                          >
-                            {field.value ? "Completed" : "In Development"}
-                          </span>
-                          <span className="text-xs text-gray-700">
-                            {field.value
-                              ? "Project has been completed"
-                              : "Project is in development"}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div
-                        className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                          field.value ? "bg-blue-600" : "bg-red-600"
-                        }`}
-                      />
-                    </div>
-                  </FormControl>
-
-                  <FormDescription className="text-xs text-gray-600 ml-1">
-                    Toggle to mark project as completed or in development
-                  </FormDescription>
-                </FormItem>
-              )}
+            {/* <ActiveStatusSwitch
+              defaultActive={false}
+              onToggle={field.onChange}
             /> */}
+            {/* <ActiveStatusSwitch /> */}
 
             <FormItem className="md:col-span-2">
               <FormLabel className="text-sm font-semibold text-gray-900">

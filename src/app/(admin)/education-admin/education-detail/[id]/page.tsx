@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { educationType } from "@/types/education-type";
+import { fetchEducationById } from "@/lib/api/education-api";
 import { RefreshCw, MoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
-// import { Textarea } from "@/components/ui/textarea";
 
 const EducationDetailPage = () => {
   const { id } = useParams();
@@ -15,49 +13,28 @@ const EducationDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
   const router = useRouter();
 
   const handleBack = () => {
-    // setLoading(true);
     router.push("/education-admin");
   };
 
   useEffect(() => {
-    const education = async () => {
-      try {
-        const res = await fetch(
-          `${BASE_URL}/api/educations?filters[documentId][$eq]=${id}`
-        );
-        const json = await res.json();
-
-        // Strapi returns an array inside data
-        const found = json.data[0];
-        if (found) {
-          setEducation({
-            id: found.id,
-            documentId: found.documentId,
-            insitituion: found.insitituion,
-            course: found.course,
-            description: found.description,
-            date: found.date,
-            location: found.location,
-            createdAt: found.createdAt,
-          });
-        } else {
-          setError("No data found.");
-        }
-      } catch (error) {
-        setError("Failed to fetch education");
-        console.error("Error fetching education:", error);
-      } finally {
-        setLoading(false);
+    const loadEducation = async () => {
+      if (!id) return;
+      setLoading(true);
+      const data = await fetchEducationById(id as string);
+      if (data) {
+        setEducation(data);
+        setError(null);
+      } else {
+        setError("No data found.");
       }
+      setLoading(false);
     };
 
-    if (id) education();
-  }, [id, BASE_URL]);
+    loadEducation();
+  }, [id]);
 
   if (loading) {
     return (
@@ -66,6 +43,7 @@ const EducationDetailPage = () => {
       </div>
     );
   }
+
   if (error || !education) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -99,102 +77,66 @@ const EducationDetailPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Institution */}
         <div className="space-y-2">
-          <label
-            htmlFor="institution"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Insitituion
+          <label className="block text-sm font-medium text-gray-700">
+            Institution
           </label>
           <input
-            id="institution"
             type="text"
-            value={education.insitituion}
+            value={education.institution}
             readOnly
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg"
           />
         </div>
 
         {/* Course */}
         <div className="space-y-2">
-          <label
-            htmlFor="course"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Course
           </label>
           <input
-            id="course"
             type="text"
             value={education.course}
             readOnly
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg"
           />
         </div>
 
-        {/* Description - spans full width on larger screens */}
+        {/* Description */}
         <div className="space-y-2 lg:col-span-2">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Description
           </label>
           <textarea
-            id="description"
             value={education.description}
             readOnly
             rows={4}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg resize-none"
           />
         </div>
 
         {/* Date */}
         <div className="space-y-2">
-          <label
-            htmlFor="date"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Date
           </label>
           <input
-            id="date"
             type="text"
             value={education.date}
             readOnly
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg"
           />
         </div>
 
         {/* Location */}
         <div className="space-y-2">
-          <label
-            htmlFor="location"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Location
           </label>
           <input
-            id="location"
             type="text"
             value={education.location}
             readOnly
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label
-            htmlFor="location"
-            className="block text-sm font-medium text-gray-700"
-          >
-            ID
-          </label>
-          <input
-            id="location"
-            type="text"
-            value={education.id}
-            readOnly
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg"
           />
         </div>
 
@@ -207,7 +149,7 @@ const EducationDetailPage = () => {
             type="text"
             value={new Date(education.createdAt).toLocaleString()}
             readOnly
-            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg"
           />
         </div>
       </div>
