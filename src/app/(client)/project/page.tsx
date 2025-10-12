@@ -1,33 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import type { ProjectAdminType } from "@/types/project-type";
+import { useEffect } from "react";
+import { useProjects } from "@/store/project-store/useProject";
+import { useLoading } from "@/store/Loading/useLoading";
+import Image from "next/image";
+import { ProjectAdminType } from "@/types/project-type";
 
 export default function ProjectsPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [projects, setProjects] = useState<ProjectAdminType[]>([]);
-
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const pageLoading = useLoading((state) => state.pageLoading);
+  const { projects, fetchProjects } = useProjects();
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      setIsLoading(true);
-      try {
-        const res = await axios.get(`${BASE_URL}/api/projects`, {
-          headers: { "Content-Type": "application/json" },
-        });
-        setProjects(res.data.data);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchProjects();
-  }, [BASE_URL]);
+  }, [fetchProjects]);
 
   return (
     <div className="min-h-screen w-full">
@@ -59,20 +45,36 @@ export default function ProjectsPage() {
           </motion.div>
 
           {/* project grid */}
-          <div>
-            {isLoading ? (
-              <p>Loading...</p>
+          <div className="mt-12">
+            {pageLoading ? (
+              <div className="text-center text-white">
+                <p>Loading...</p>
+              </div>
             ) : projects.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {projects.map((project) => (
+                {projects.map((project: ProjectAdminType) => (
                   <div key={project.id} className="p-4 border rounded-lg">
-                    <h2 className="text-xl font-bold">{project.title}</h2>
-                    <p>{project.description}</p>
+                    {project.image && (
+                      <div className="relative w-full h-48 mb-4">
+                        <Image
+                          src={project.image.url}
+                          alt={project.title}
+                          fill
+                          className="object-cover rounded-md"
+                        />
+                      </div>
+                    )}
+                    <h2 className="text-xl font-bold text-white">
+                      {project.title}
+                    </h2>
+                    <p className="text-slate-300">{project.description}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p>No projects found.</p>
+              <div className="text-center text-white">
+                <p>No projects found.</p>
+              </div>
             )}
           </div>
         </div>
