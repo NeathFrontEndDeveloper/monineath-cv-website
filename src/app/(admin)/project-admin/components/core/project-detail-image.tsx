@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { Maximize2, RefreshCw } from "lucide-react";
 import { useState } from "react";
@@ -72,7 +73,7 @@ export const ProjectImage = ({
           title={title}
           image={image}
           BASE_URL={BASE_URL}
-          onClose={() => setIsOpen(false)}
+          onCloseAction={() => setIsOpen(false)}
         />
       )}
     </div>

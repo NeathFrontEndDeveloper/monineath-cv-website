@@ -35,9 +35,9 @@ const ProjectDetailPage = () => {
     }
   }, [id, setPageLoading]);
 
-  useEffect(() => {
-    if (id) loadProjectDetail();
-  }, [loadProjectDetail, id]);
+    useEffect(() => {
+        if (id) void loadProjectDetail();
+    }, [loadProjectDetail, id]);
 
   if (pageLoading) return <LoadingScreen />;
   if (error || !project) return <ProjectError message={error || "No data"} />;
