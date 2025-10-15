@@ -7,7 +7,7 @@ export const getProjects = async (): Promise<ProjectAdminType[]> => {
   const res = await api.get("/projects?populate=*");
   const json = res.data;
 
-  return json.data.map((item: any) => {
+  return json.data.map((item: ProjectAdminType) => {
     const imageUrl = item.image?.url ? `${BASE_URL}${item.image.url}` : "";
 
     return {

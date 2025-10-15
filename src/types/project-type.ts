@@ -1,3 +1,5 @@
+import {StrapiImage} from "./strapi";
+
 export interface ImageFormat {
   url: string;
   width: number;
@@ -5,21 +7,21 @@ export interface ImageFormat {
   key: string;
 }
 
-export interface ImageType {
-  id: number;
-  name: string;
-  url: string;
-  width: number;
-  height: number;
-  formats?: {
-    thumbnail?: ImageFormat;
-    small?: ImageFormat;
-    medium?: ImageFormat;
-    large?: ImageFormat;
-  };
-  alternativeText?: string | null;
-  caption?: string | null;
-}
+// export interface ImageType {
+//   id: number;
+//   name: string;
+//   url: string;
+//   width: number;
+//   height: number;
+//   formats?: {
+//     thumbnail?: ImageFormat;
+//     small?: ImageFormat;
+//     medium?: ImageFormat;
+//     large?: ImageFormat;
+//   };
+//   alternativeText?: string | null;
+//   caption?: string | null;
+// }
 
 export interface ProjectAdminType {
   id: string;
@@ -30,7 +32,9 @@ export interface ProjectAdminType {
   techStack: string;
   active: boolean;
   // image: ImageType | string | null;
-  image: string;
+  // image: string;
+    image: StrapiImage | null;
+  url: string;
   createdAt: string;
 }
 

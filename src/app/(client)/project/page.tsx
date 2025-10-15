@@ -11,11 +11,14 @@ const ProjectsPage = () => {
   const pageLoading = useLoading((state) => state.pageLoading);
   const { projects, fetchProjects } = useProjects();
 
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     (async () => {
       await fetchProjects();
     })();
   }, [fetchProjects]);
+
 
   return (
     <div className="min-h-screen w-full">
@@ -52,7 +55,7 @@ const ProjectsPage = () => {
                       <div className="relative w-full h-56 overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
                         <Image
-                          src={project.image}
+                            src={`${BASE_URL}${project.image.url}`}
                           alt={project.title}
                           width={400}
                           height={300}
