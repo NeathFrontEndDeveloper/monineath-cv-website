@@ -153,9 +153,11 @@ const ProjectTable = () => {
     },
   });
 
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    useEffect(() => {
+        (async () => {
+            await fetchProjects();
+        })();
+    }, [fetchProjects]);
 
   const handleCreateProject = () => {
     setBtnLoading(true);

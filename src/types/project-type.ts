@@ -29,7 +29,8 @@ export interface ProjectAdminType {
   features: string;
   techStack: string;
   active: boolean;
-  image: ImageType | null;
+  // image: ImageType | string | null;
+  image: string;
   createdAt: string;
 }
 
