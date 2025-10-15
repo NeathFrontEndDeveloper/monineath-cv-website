@@ -20,7 +20,7 @@ export const deleteContact = async (documentId: string) => {
   await api.delete(`/contacts/${documentId}`);
 };
 
-// Fetch single contact detail
+// Fetch a single Contact by DocumentsId
 export const fetchContactById = async (
   documentId: string
 ): Promise<ContactType | null> => {

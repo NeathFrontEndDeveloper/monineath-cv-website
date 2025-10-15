@@ -7,28 +7,30 @@ export const getProjects = async (): Promise<ProjectAdminType[]> => {
   const res = await api.get("/projects?populate=*");
   const json = res.data;
 
-  return json.data.map((item: ProjectAdminType) => {
+  return json.data.map((item: any) => {
     const imageUrl = item.image?.url ? `${BASE_URL}${item.image.url}` : "";
 
     return {
       id: item.id,
+      documentId: item.documentId,
       title: item.title,
       description: item.description,
       features: item.features,
       techStack: item.techStack,
+      active: item.active,
       image: imageUrl,
-      documentId: item.documentId,
+      createdAt: item.createdAt,
     };
   });
 };
 
 // Project Detail logic
 export const fetchProjectDetail = async (
-  documentId: string
+  documentId: string,
 ): Promise<ProjectAdminType | null> => {
   try {
     const res = await api.get(
-      `/projects?filters[documentId][$eq]=${documentId}&populate=image`
+      `/projects?filters[documentId][$eq]=${documentId}&populate=image`,
     );
 
     const found = res.data.data[0];
@@ -42,7 +44,7 @@ export const fetchProjectDetail = async (
 // Create Project Logic
 export const createProject = async (
   values: ProjectCreateInput,
-  image?: File | null
+  image?: File | null,
 ) => {
   let imageId: number | null = null;
 

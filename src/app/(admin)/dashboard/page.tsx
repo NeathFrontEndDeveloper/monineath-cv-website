@@ -83,8 +83,8 @@ const Dashboard = () => {
       value: statsLoading
         ? "..."
         : statsError
-        ? "Error"
-        : dashboardStats.totalProjects.toString(),
+          ? "Error"
+          : dashboardStats.totalProjects.toString(),
       icon: FolderOpen,
       color: "bg-blue-500",
       bgColor: "bg-blue-50",
@@ -95,8 +95,8 @@ const Dashboard = () => {
       value: statsLoading
         ? "..."
         : statsError
-        ? "Error"
-        : dashboardStats.totalContacts?.toString() || "0",
+          ? "Error"
+          : dashboardStats.totalContacts?.toString() || "0",
       icon: MessageCircleMore,
       color: "bg-green-500",
       bgColor: "bg-green-50",
@@ -107,8 +107,8 @@ const Dashboard = () => {
       value: statsLoading
         ? "..."
         : statsError
-        ? "Error"
-        : dashboardStats.totalEducations?.toString() || "0",
+          ? "Error"
+          : dashboardStats.totalEducations?.toString() || "0",
       icon: GraduationCap,
       color: "bg-purple-500",
       bgColor: "bg-purple-50",
@@ -119,8 +119,8 @@ const Dashboard = () => {
       value: statsLoading
         ? "..."
         : statsError
-        ? "Error"
-        : dashboardStats.totalNotifications?.toString() || "0",
+          ? "Error"
+          : dashboardStats.totalNotifications?.toString() || "0",
       icon: BellRing,
       color: "bg-purple-500",
       bgColor: "bg-purple-50",

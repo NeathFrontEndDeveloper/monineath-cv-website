@@ -189,6 +189,8 @@ const Skills = () => {
                           {skillInfo.text}
                         </span>
 
+
+
                         {/* Skill dots */}
                         <div className="flex gap-1">
                           {Array.from({
